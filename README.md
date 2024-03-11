@@ -5,7 +5,7 @@
 Arch-2024-Sping-FDU  
 │── build：仿真测试时才会生成的目录  
 │── difftest：仿真测试框架  
-│── ready-to-run：仿真测试文件目录（包括汇编文件和二进制文件等） 
+│── ready-to-run：仿真测试文件目录（包括汇编文件和二进制文件等）  
 │── verilate：verilator部分仿真文件目录  
 │── vsrc：需要写的CPU代码所在目录  
 │　　├── include：头文件目录  
