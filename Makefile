@@ -47,6 +47,8 @@ test-lab3: sim
 test-lab4: sim
 	TEST=$(TEST) ./build/emu --diff $(NEMU_HOME)/riscv64-nemu-interpreter-so -i ./ready-to-run/lab4/lab4-test.bin $(VOPT) || true
 
+test-lab5: sim
+	TEST=$(TEST) ./build/emu --diff $(NEMU_HOME)/riscv64-nemu-interpreter-so -i ./ready-to-run/lab5/lab5-test.bin $(VOPT) || true
 
 clean:
 	rm -rf build
