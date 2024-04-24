@@ -3,8 +3,6 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/pipes.sv"
-`else
-
 `endif
 
 module ControlUnit import common::*;(

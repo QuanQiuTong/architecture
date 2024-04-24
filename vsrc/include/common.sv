@@ -240,34 +240,34 @@ typedef struct packed {
     word_t data;        // the data from AXI bus
 } cbus_resp_t;
 
-    parameter _AND = 5'b00000, //
-              _OR = 5'b00001, //
-              ADD = 5'b00010, //
-              _XOR = 5'b00011,
-              SLTU = 5'b00100,
-              SLL = 5'b00101,
-              SUB = 5'b00110, //
-              SLT = 5'b00111,
-              SRL = 5'b01001,
-              CPYB = 5'b01010,
-              SRA = 5'b01011,
-              NOR = 5'b01100, //
-              MUL = 5'b01101,
-              DIV = 5'b01110,
-              REM = 5'b01111,
-              DIVU = 5'b10001,
+    // parameter _AND = 5'b00000, //
+    //           _OR = 5'b00001, //
+    //           ADD = 5'b00010, //
+    //           _XOR = 5'b00011,
+    //           SLTU = 5'b00100,
+    //           SLL = 5'b00101,
+    //           SUB = 5'b00110, //
+    //           SLT = 5'b00111,
+    //           SRL = 5'b01001,
+    //           CPYB = 5'b01010,
+    //           SRA = 5'b01011,
+    //           NOR = 5'b01100, //
+    //           MUL = 5'b01101,
+    //           DIV = 5'b01110,
+    //           REM = 5'b01111,
+    //           DIVU = 5'b10001,
               
-              REMU = 5'b10010,
-              SRAW = 5'b10000,
-              ADDW = 5'b10011,
-              SUBW = 5'b10100,
-              SLLW = 5'b10101,
-              SRLW = 5'b10110,
-                MULW = 5'b10111,
-                DIVW = 5'b11000,
-                DIVUW = 5'b11001,
-                REMW = 5'b11010,
-                REMUW = 5'b11011;
+    //           REMU = 5'b10010,
+    //           SRAW = 5'b10000,
+    //           ADDW = 5'b10011,
+    //           SUBW = 5'b10100,
+    //           SLLW = 5'b10101,
+    //           SRLW = 5'b10110,
+    //             MULW = 5'b10111,
+    //             DIVW = 5'b11000,
+    //             DIVUW = 5'b11001,
+    //             REMW = 5'b11010,
+    //             REMUW = 5'b11011;
 
 endpackage
 `endif
