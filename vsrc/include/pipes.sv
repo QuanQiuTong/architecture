@@ -20,32 +20,13 @@ parameter F7_SD=     7'b0100011;
 parameter F7_AUIPC=  7'b0010111;
 parameter F7_JALR=   7'b1100111;
 
-parameter F3_ADD=3'b000;
-parameter F3_XOR=3'b100;
-parameter F3_OR=3'b110;
-parameter F3_AND=3'b111;
-parameter F3_BEQ=3'b000;
-parameter F3_BNE=3'b001;
-parameter F3_BLT=3'b100;
-parameter F3_DIV=3'b100;
-parameter F3_REM=3'b110;
-parameter F3_DIVU=3'b101;
-parameter F3_REMU=3'b111;
-parameter F3_BGE=3'b101;
-parameter F3_BLTU=3'b110;
-parameter F3_BGEU=3'b111;
-parameter F3_SLT=3'b010;
-parameter F3_SLTU=3'b011;
-parameter F3_SLL=3'b001;
-parameter F3_SR=3'b101;
-
 parameter F7_FIRST_ADD=7'b0000000;
 parameter F7_FIRST_SUB=7'b0100000;
 parameter F7_FIRST_MUL=7'b0000001;
 
 /* Define pipeline structures here */
 typedef enum logic[5:0] {
-	UNKNOWN,ALUI,ALU,ALUW,ALUIW,LUI,JAL,BEQ,LD,SD,AUIPC,JALR,BNE,BLT,BGE,BLTU,BGEU
+	NOP,ALUI,ALU,ALUW,ALUIW,LUI,JAL,BEQ,LD,SD,AUIPC,JALR,BNE,BLT,BGE,BLTU,BGEU
 } decode_op_t;
 typedef struct packed {
 	u1 ismem;

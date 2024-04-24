@@ -19,28 +19,21 @@ module decoder
 
     always_comb begin
         op = ALUI;
-        alufunc = ADD;
         regwrite = 1'b1;
 
         unique case(instr[6:0])
             F7_ALUI: begin
                 op = ALUI;
                 regwrite = 1'b1;
-
                 unique case(funct3)
-                    F3_ADD: alufunc = ADD;
-                    F3_XOR: alufunc = XOR;
-                    F3_OR: alufunc = OR;
-                    F3_AND: alufunc = AND;
-                    F3_SLT: alufunc = SLT;
-                    F3_SLTU: alufunc = SLTU;
-                    F3_SLL: alufunc = SLL;
-                    F3_SR: begin
-                        if (instr[30])
-                            alufunc = SRA;
-                        else
-                            alufunc = SRL;
-                    end
+                    'b000: alufunc = ADD;
+                    'b100: alufunc = XOR;
+                    'b110: alufunc = OR;
+                    'b111: alufunc = AND;
+                    'b010: alufunc = SLT;
+                    'b011: alufunc = SLTU;
+                    'b001: alufunc = SLL;
+                    'b101: alufunc = instr[30] ? SRA : SRL;
                 endcase 
             end
 
@@ -49,7 +42,7 @@ module decoder
                 regwrite = 1'b1;
 
                 unique case(funct3)
-                    F3_ADD: begin
+                    'b000: begin
                         if (f7_first == F7_FIRST_ADD)
                             alufunc = ADD;
                         else if (f7_first == F7_FIRST_SUB)
@@ -57,28 +50,28 @@ module decoder
                         else if (f7_first == F7_FIRST_MUL)
                             alufunc = MULT;
                     end
-                    F3_XOR: begin
+                    'b100: begin
                         if (f7_first == F7_FIRST_MUL)
                             alufunc = DIV;
                         else
                             alufunc = XOR;
                     end
-                    F3_OR: begin
+                    'b110: begin
                         if (f7_first == F7_FIRST_MUL)
                             alufunc = REM;
                         else
                             alufunc = OR;
                     end
-                    F3_AND: begin
+                    'b111: begin
                         if (f7_first == F7_FIRST_MUL)
                             alufunc = REMU;
                         else
                             alufunc = AND;
                     end
-                    F3_SLT: alufunc = SLT;
-                    F3_SLTU: alufunc = SLTU;
-                    F3_SLL: alufunc = SLL;
-                    F3_SR: begin
+                    'b010: alufunc = SLT;
+                    'b011: alufunc = SLTU;
+                    'b001: alufunc = SLL;
+                    'b101: begin
                         if (f7_first == F7_FIRST_SUB)
                             alufunc = SRA;
                         else if (f7_first == F7_FIRST_ADD)
@@ -94,14 +87,14 @@ module decoder
                 regwrite = 1'b1;
 
                 unique case(funct3)
-                    F3_ADD: alufunc = ADD;
-                    F3_XOR: alufunc = XOR;
-                    F3_OR: alufunc = OR;
-                    F3_AND: alufunc = AND;
-                    F3_SLT: alufunc = SLT;
-                    F3_SLTU: alufunc = SLTU;
-                    F3_SLL: alufunc = SLL;
-                    F3_SR: begin
+                    'b000: alufunc = ADD;
+                    'b100: alufunc = XOR;
+                    'b110: alufunc = OR;
+                    'b111: alufunc = AND;
+                    'b010: alufunc = SLT;
+                    'b011: alufunc = SLTU;
+                    'b001: alufunc = SLL;
+                    'b101: begin
                         if (instr[30])
                             alufunc = SRA;
                         else
@@ -115,7 +108,7 @@ module decoder
                 regwrite = 1'b1;
 
                 unique case(funct3)
-                    F3_ADD: begin
+                    'b000: begin
                         if (f7_first == F7_FIRST_ADD)
                             alufunc = ADD;
                         else if (f7_first == F7_FIRST_SUB)
@@ -123,28 +116,28 @@ module decoder
                         else if (f7_first == F7_FIRST_MUL)
                             alufunc = MULT;
                     end
-                    F3_XOR: begin
+                    'b100: begin
                         if (f7_first == F7_FIRST_MUL)
                             alufunc = DIV;
                         else
                             alufunc = XOR;
                     end
-                    F3_OR: begin
+                    'b110: begin
                         if (f7_first == F7_FIRST_MUL)
                             alufunc = REM;
                         else
                             alufunc = OR;
                     end
-                    F3_AND: begin
+                    'b111: begin
                         if (f7_first == F7_FIRST_MUL)
                             alufunc = REMU;
                         else
                             alufunc = AND;
                     end
-                    F3_SLT: alufunc = SLT;
-                    F3_SLTU: alufunc = SLTU;
-                    F3_SLL: alufunc = SLL;
-                    F3_SR: begin
+                    'b010: alufunc = SLT;
+                    'b011: alufunc = SLTU;
+                    'b001: alufunc = SLL;
+                    'b101: begin
                         if (f7_first == F7_FIRST_SUB)
                             alufunc = SRA;
                         else if (f7_first == F7_FIRST_ADD)
@@ -171,27 +164,27 @@ module decoder
                 regwrite = 1'b0;
 
                 unique case(funct3)
-                    F3_BEQ: begin
+                    'b000: begin
                         op = BEQ;
                         alufunc = COMPARE;
                     end
-                    F3_BNE: begin
+                    'b001: begin
                         op = BNE;
                         alufunc = COMPARE;
                     end
-                    F3_BLT: begin
+                    'b100: begin
                         op = BLT;
                         alufunc = SLT;
                     end
-                    F3_BGE: begin
+                    'b101: begin
                         op = BGE;
                         alufunc = SLT;
                     end
-                    F3_BLTU: begin
+                    'b110: begin
                         op = BLTU;
                         alufunc = SLTU;
                     end
-                    F3_BGEU: begin
+                    'b111: begin
                         op = BGEU;
                         alufunc = SLTU;
                     end

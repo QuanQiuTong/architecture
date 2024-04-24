@@ -22,7 +22,7 @@ module execute
     output logic stope
 );
     u1 bubble;
-    contral_t ctl;
+    contral_t ctl = dataD.ctl;
     word_t rd2, rd1;
     u32 instr = dataD.instr;
     word_t alu_result;
@@ -35,26 +35,25 @@ module execute
         .choose(ctl.op == ALUW || ctl.op == ALUIW),
         .ctl, .bubble, .valid(dataD.valid)
     );
-    offset offset_module (
+    offset offset (
         .valid(dataD.valid),
-        .raw_instr(instr),
-        .ctl,
+        .instr(instr),
+        .op(ctl.op),
         .choose(alu_result),
         .jump,
         .branch,
         .pc(dataD.pc),
         .jumppc(dataD.rd1 + {{52{instr[31]}}, instr[31:20]})
     );
-    assign ctl = dataD.ctl;
     assign stope = bubble & dataD.valid;
     always_ff @(posedge clk) begin
         if (!stopm) begin
-            dataE.valid <= !bubble && dataD.valid;
-            dataE.pc <= dataD.pc;
-            dataE.instr <= dataD.instr;
-            dataE.ctl <= dataD.ctl;
-            dataE.dst <= dataD.dst;
-            dataE.rd2 <= dataD.rd2;
+            dataE.valid  <= !bubble && dataD.valid;
+            dataE.pc     <= dataD.pc;
+            dataE.instr  <= dataD.instr;
+            dataE.ctl    <= dataD.ctl;
+            dataE.dst    <= dataD.dst;
+            dataE.rd2    <= dataD.rd2;
             dataE.result <= alu_result;
         end
     end

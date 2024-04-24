@@ -13,25 +13,23 @@ module offset
 	import common::*;
 	import pipes::*;(
     input u1 valid,
-    input u32 raw_instr,
-    input contral_t ctl,
+    input u32 instr,
+    input logic[5:0] op,
     input word_t choose,
     output u64 jump,
     output u1 branch,
     input  u64 pc,
     input u64 jumppc
 );
-    always_comb begin 
-        jump=pc;
-        branch=0;
-        unique case(ctl.op)
+    always_comb 
+        unique case(op)
             JAL : begin
-                jump=pc+{{43{raw_instr[31]}},{raw_instr[31]},{raw_instr[19:12]},{raw_instr[20]},{raw_instr[30:21]},{1'b0}};
+                jump=pc+{{43{instr[31]}},{instr[31]},{instr[19:12]},{instr[20]},{instr[30:21]},{1'b0}};
                 branch=valid;
             end
             BEQ , BLT,BLTU:begin
                 if (choose==1) begin
-                    jump=pc+{{51{raw_instr[31]}},{raw_instr[31]},{raw_instr[7]},{raw_instr[30:25]},{raw_instr[11:8]},{1'b0}};
+                    jump=pc+{{51{instr[31]}},{instr[31]},{instr[7]},{instr[30:25]},{instr[11:8]},{1'b0}};
                     branch=valid;
                 end
                 else begin
@@ -41,7 +39,7 @@ module offset
             end
             BNE ,BGE , BGEU: begin
                 if (choose==0) begin
-                    jump=pc+{{51{raw_instr[31]}},{raw_instr[31]},{raw_instr[7]},{raw_instr[30:25]},{raw_instr[11:8]},{1'b0}};
+                    jump=pc+{{51{instr[31]}},{instr[31]},{instr[7]},{instr[30:25]},{instr[11:8]},{1'b0}};
                     branch=valid;
                 end
                 else begin
@@ -53,11 +51,8 @@ module offset
                 jump=jumppc;
                 branch=valid;
             end
-            default: begin
-                
-            end
+            default: begin jump=pc; branch=0; end
         endcase 
-    end
 endmodule
 
 `endif

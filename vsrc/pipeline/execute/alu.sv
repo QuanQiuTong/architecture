@@ -7,8 +7,6 @@
 `include "pipeline/execute/multi.sv"
 `include "pipeline/execute/div.sv"
 `include "pipeline/execute/divu.sv"
-`else
-
 `endif
 
 module alu
@@ -23,79 +21,74 @@ module alu
 	input logic valid,
 	output u1 bubble
 );
-	logic[63:0] a,b,c;
-	assign a=srca;
-	assign b=srcb;
+	logic [63:0] a, b, c;
+	assign a = srca;
+	assign b = srcb;
 	logic more;
-	//assign more=(ctl.op==ALUI||ctl.op==ALUIW||ctl.op==ALU)? b[5]:1'b0;
-	u1 multibubble,divbubble,divububble;
-	u64 multiresult,divresult,remresult,divuresult,remuresult;
-	logic debug;
+	u1 multibubble, divbubble, divububble;
+	u64 multiresult, divresult, remresult, divuresult, remuresult;
 	always_comb begin
 		c = '0;
-		bubble=0;
-		debug=0;
-		unique case(alufunc)
+		bubble = 0;
+		unique case (alufunc)
 			ADD: c = a + b;
 			XOR: c = a ^ b;
-			OR : c = a | b; 
+			OR: c = a | b; 
 			AND: c = a & b;
 			SUB: c = a - b;
 			CPYB: c = b;
-			COMPARE: c ={63'b0, (a==b)};
-			SLT: c= $signed(a) < $signed(b) ? 64'b1 : 64'b0;
-			SLTU: c={63'b0,({1'b0,a}<{1'b0,b})};
-			SLL: c=a<<b[5:0];
-			SRL: c=a>>b[5:0];
+			COMPARE: c = {63'b0, (a == b)};
+			SLT: c = $signed(a) < $signed(b) ? 64'b1 : 64'b0;
+			SLTU: c = {63'b0, a < b};
+			SLL: c = a << b[5:0];
+			SRL: c = a >> b[5:0];
 			SRA: c = $signed(a) >>> b[5:0];
 			MULT: begin
-				c=multiresult+(srcb[0]?srca:0);
-				bubble=~multibubble;
+				c = multiresult + (srcb[0] ? srca : 0);
+				bubble = ~multibubble;
 			end
 			DIV: begin
-				if (srcb==0) begin
-					c='1;
-					bubble=0;
+				if (srcb == 0) begin
+					c = '1;
+					bubble = 0;
 				end
 				else begin
-					if (srca[63]==srcb[63]&&$signed(divresult)>=0||srca[63]!=srcb[63]&&$signed(divresult)<=0) c=divresult;
-					else c=0-divresult;
-					bubble=~divbubble;
+					if (srca[63] == srcb[63] && $signed(divresult) >= 0 || srca[63] != srcb[63] && $signed(divresult) <= 0) c = divresult;
+					else c = 0 - divresult;
+					bubble = ~divbubble;
 				end
 			end
 			REM: begin
-				if (srcb==0) begin
-					c=srca;
-					bubble=0;
+				if (srcb == 0) begin
+					c = srca;
+					bubble = 0;
 				end
 				else begin
-					c=remresult;
-					bubble=~divbubble;
+					c = remresult;
+					bubble = ~divbubble;
 				end
 			end
 			DIVU: begin
-				if (srcb==0) begin
-					c='1;
-					bubble=0;
+				if (srcb == 0) begin
+					c = '1;
+					bubble = 0;
 				end
 				else begin
-					c=divuresult;
-					bubble=~divububble;
+					c = divuresult;
+					bubble = ~divububble;
 				end
 			end
 			REMU: begin
-				if (srcb==0) begin
-					c=srca;
-					bubble=0;
+				if (srcb == 0) begin
+					c = srca;
+					bubble = 0;
 				end
 				else begin
-					c=remuresult;
-					bubble=~divububble;					
+					c = remuresult;
+					bubble = ~divububble;					
 				end
 			end
-			default: begin
-				bubble=0;
-			end
+			default: bubble = 0;
 		endcase
 		if (choose) begin
 			unique case (ctl.alufunc)
@@ -105,23 +98,21 @@ module alu
 				default: begin
 				end
 			endcase
-			result={{32{c[31]}},c[31:0]};
+			result = {{32{c[31]}}, c[31:0]};
 		end
-		else begin
-			result=c[63:0];
-		end
+		else result = c;
 	end
-	multi multi(
-		.clk,.srca,.srcb,.result(multiresult),
-		.data_ok(multibubble),.valid((alufunc==MULT)&valid)
+	multi multi (
+		.clk, .srca, .srcb, .result(multiresult),
+		.data_ok(multibubble), .valid((alufunc == MULT) & valid)
 	);
-	div div(
-		.clk,.srca,.srcb,.quot(divresult),.rem(remresult),
-		.data_ok(divbubble),.valid(((alufunc==DIV||alufunc==REM)&&srcb!=0)&valid)
+	div div (
+		.clk, .srca, .srcb, .quot(divresult), .rem(remresult),
+		.data_ok(divbubble), .valid(((alufunc == DIV || alufunc == REM) && srcb != 0) & valid)
 	);
-	divu divu(
-		.clk,.srca,.srcb,.quot(divuresult),.rem(remuresult),
-		.data_ok(divububble),.valid(((alufunc==DIVU||alufunc==REMU)&&srcb!=0)&valid)
+	divu divu (
+		.clk, .srca, .srcb, .quot(divuresult), .rem(remuresult),
+		.data_ok(divububble), .valid(((alufunc == DIVU || alufunc == REMU) && srcb != 0) & valid)
 	);
 endmodule
 

@@ -3,7 +3,6 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/pipes.sv"
-`include "pipeline/regfile/regfile.sv"
 `include "pipeline/fetch/fetch.sv"
 `include "pipeline/decode/decode.sv"
 `include "pipeline/execute/execute.sv"
@@ -30,53 +29,49 @@ module core
 	u64 jump;
 	tran_t trane,tranm,trand;
 
-	wire fvalid;
-	reg[31:0] instr;
-	reg[63:0] pc;
-
 	regfile regfile(
 		.clk, .reset, .we(dataM.ctl.regwrite&&dataM.valid),
-		.rs1,.rs2,.rd(dataM.dst),
+		.rs1, .rs2, .rd(dataM.dst),
 		.in(dataM.result),
-		.q1,.q2
+		.q1, .q2
 	);
 	fetch fetch(
-		.clk,.reset,
-		.ireq,.iresp,
-		.branch,.jump,
+		.clk, .reset,
+		.ireq, .iresp,
+		.branch, .jump,
 		.stop(stopd | stope | stopm),
 		.dataF
 	);
 	decode decode(
-		.clk,.reset,
-		.dataF,.dataD,
-		.rs1,.rs2,.q1,.q2,
+		.clk, .reset,
+		.dataF, .dataD,
+		.rs1, .rs2, .q1, .q2,
 		.branch,
-		.trane,.tranm,
-		.stopd,.stope,.stopm,.trand
+		.trane, .tranm,
+		.stopd, .stope, .stopm, .trand
 	);
 	execute execute(
-		.clk,.reset,
-		.dataD,.dataE,
-		.branch,.jump,
-		.stope,.stopm
+		.clk, .reset,
+		.dataD, .dataE,
+		.branch, .jump,
+		.stope, .stopm
 	);
 	memory memory(
-		.clk,.reset,
-		.dataE,.dataM,
-		.dreq,.dresp,
+		.clk, .reset,
+		.dataE, .dataM,
+		.dreq, .dresp,
 		.stopm
 	);
-	logic skip=(dataM.ctl.op==SD||dataM.ctl.op==LD)&&dataM.addr[31]==0;
-	assign tranm.dst=(dataM.ctl.regwrite&dataM.valid)?dataM.dst:0;
-	assign tranm.data=dataM.result;
-	assign tranm.ismem=1;
-	assign trane.dst=(dataE.ctl.regwrite&dataE.valid)?dataE.dst:0;
-	assign trane.data=dataE.result;
-	assign trane.ismem=(dataE.ctl.op==SD||dataE.ctl.op==LD);
-	assign trand.dst=(dataD.ctl.regwrite&dataD.valid)?dataD.dst:0;
-	assign trand.data=0;
-	assign trand.ismem=(dataD.ctl.op==SD||dataD.ctl.op==LD);
+	logic skip = (dataM.ctl.op == SD || dataM.ctl.op == LD) && dataM.addr[31] == 0;
+	assign tranm.dst = (dataM.ctl.regwrite && dataM.valid) ? dataM.dst : 0;
+	assign tranm.data = dataM.result;
+	assign tranm.ismem = 1;
+	assign trane.dst = (dataE.ctl.regwrite && dataE.valid) ? dataE.dst : 0;
+	assign trane.data = dataE.result;
+	assign trane.ismem = (dataE.ctl.op == SD || dataE.ctl.op == LD);
+	assign trand.dst = (dataD.ctl.regwrite && dataD.valid) ? dataD.dst : 0;
+	assign trand.data = 0;
+	assign trand.ismem = (dataD.ctl.op == SD || dataD.ctl.op == LD);
 
 `ifdef VERILATOR
 	DifftestInstrCommit DifftestInstrCommit(

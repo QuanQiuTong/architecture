@@ -41,6 +41,20 @@ module decode
         .trand,
         .bubble(bubble1)
     );
+    // always_comb begin
+    //     temp1 = q1;
+    //     bubble1 = 0;
+    //     if (rs1 != 0) begin
+    //         if (rs1 == trand.dst)
+    //             bubble1 = 1;
+    //         else if (rs1 == trane.dst) begin
+    //             temp1 = trane.data;
+    //             bubble1 = trane.ismem;
+    //         end
+    //         else if (rs1 == tranm.dst)
+    //             temp1 = tranm.data;
+    //     end
+    // end
 
     select select2(
         .ra(rs2),
@@ -75,14 +89,14 @@ module decode
     always_ff @(posedge clk)
         if (!stope & !stopm) begin 
             dataD.valid <= ~(branch | bubble) & dataF.valid;
-            dataD.pc <= dataF.pc;
+            dataD.pc    <= dataF.pc;
             dataD.instr <= dataF.instr;
-            dataD.ctl <= ctl;
-            dataD.dst <= dataF.instr[11:7];
-            dataD.srca <= rd1;
-            dataD.srcb <= rd2;
-            dataD.rd1 <= temp1;
-            dataD.rd2 <= temp2;
+            dataD.ctl   <= ctl;
+            dataD.dst   <= dataF.instr[11:7];
+            dataD.srca  <= rd1;
+            dataD.srcb  <= rd2;
+            dataD.rd1   <= temp1;
+            dataD.rd2   <= temp2;
         end
 endmodule
 

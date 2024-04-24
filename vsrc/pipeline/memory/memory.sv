@@ -9,12 +9,12 @@
 module memory
     import common::*;
     import pipes::*;(
-    input logic clk, reset,
-    input excute_data_t dataE,
+    input           clk, reset,
+    input excute_data_t  dataE,
     output memory_data_t dataM,
-    output dbus_req_t dreq,
-    input dbus_resp_t dresp,
-    output logic stopm
+    output dbus_req_t    dreq,
+    input dbus_resp_t    dresp,
+    output logic         stopm
 );
     wire[2:0] funct3 = dataE.instr[14:12];
     wire load = dataE.ctl.op == LD, store = dataE.ctl.op == SD;
@@ -49,13 +49,13 @@ module memory
     assign stopm = (load | store) & !dresp.data_ok & dataE.valid;
 
     always_ff @(posedge clk) begin
-        dataM.pc <= dataE.pc;
-        dataM.valid <= !stopm & dataE.valid; //(!(load | store) | dresp.data_ok) & dataE.valid;
-        dataM.instr <= dataE.instr;
-        dataM.ctl <= dataE.ctl;
-        dataM.dst <= dataE.dst;
+        dataM.pc     <= dataE.pc;
+        dataM.valid  <= !stopm & dataE.valid; // (!(load | store) | dresp.data_ok) & dataE.valid;
+        dataM.instr  <= dataE.instr;
+        dataM.ctl    <= dataE.ctl;
+        dataM.dst    <= dataE.dst;
         dataM.result <= (load | store) ? out : dataE.result;
-        dataM.addr <= dataE.result;
+        dataM.addr   <= dataE.result;
     end
 endmodule
 
