@@ -30,7 +30,7 @@ typedef enum logic[5:0] {
 } decode_op_t;
 typedef struct packed {
 	u1 ismem;
-	creg_addr_t dst;// 不是写操作该数置为0
+	creg_addr_t dst; // 不是写操作该数置为0
 	word_t data;
 } tran_t;
 typedef struct packed {

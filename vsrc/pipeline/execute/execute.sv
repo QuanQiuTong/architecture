@@ -28,8 +28,8 @@ module execute
     word_t alu_result;
     alu alu (
         .clk,
-        .srca(dataD.srca),
-        .srcb(dataD.srcb),
+        .a(dataD.srca),
+        .b(dataD.srcb),
         .alufunc(ctl.alufunc),
         .result(alu_result),
         .choose(ctl.op == ALUW || ctl.op == ALUIW),

@@ -13,7 +13,7 @@ module alu
 	import common::*;
 	import pipes::*;(
 	input u1 clk,
-	input u64 srca, srcb,
+	input u64 a, b,
 	input alufunc_t alufunc,
 	output u64 result,
 	input logic choose,
@@ -21,9 +21,7 @@ module alu
 	input logic valid,
 	output u1 bubble
 );
-	logic [63:0] a, b, c;
-	assign a = srca;
-	assign b = srcb;
+	logic [63:0] c;
 	logic more;
 	u1 multibubble, divbubble, divububble;
 	u64 multiresult, divresult, remresult, divuresult, remuresult;
@@ -44,23 +42,23 @@ module alu
 			SRL: c = a >> b[5:0];
 			SRA: c = $signed(a) >>> b[5:0];
 			MULT: begin
-				c = multiresult + (srcb[0] ? srca : 0);
+				c = multiresult + (b[0] ? a : 0);
 				bubble = ~multibubble;
 			end
 			DIV: begin
-				if (srcb == 0) begin
+				if (b == 0) begin
 					c = '1;
 					bubble = 0;
 				end
 				else begin
-					if (srca[63] == srcb[63] && $signed(divresult) >= 0 || srca[63] != srcb[63] && $signed(divresult) <= 0) c = divresult;
+					if (a[63] == b[63] && $signed(divresult) >= 0 || a[63] != b[63] && $signed(divresult) <= 0) c = divresult;
 					else c = 0 - divresult;
 					bubble = ~divbubble;
 				end
 			end
 			REM: begin
-				if (srcb == 0) begin
-					c = srca;
+				if (b == 0) begin
+					c = a;
 					bubble = 0;
 				end
 				else begin
@@ -69,7 +67,7 @@ module alu
 				end
 			end
 			DIVU: begin
-				if (srcb == 0) begin
+				if (b == 0) begin
 					c = '1;
 					bubble = 0;
 				end
@@ -79,8 +77,8 @@ module alu
 				end
 			end
 			REMU: begin
-				if (srcb == 0) begin
-					c = srca;
+				if (b == 0) begin
+					c = a;
 					bubble = 0;
 				end
 				else begin
@@ -102,17 +100,17 @@ module alu
 		end
 		else result = c;
 	end
-	multi multi (
-		.clk, .srca, .srcb, .result(multiresult),
+	multi _mul_ (
+		.clk, .a, .b, .result(multiresult),
 		.data_ok(multibubble), .valid((alufunc == MULT) & valid)
 	);
 	div div (
-		.clk, .srca, .srcb, .quot(divresult), .rem(remresult),
-		.data_ok(divbubble), .valid(((alufunc == DIV || alufunc == REM) && srcb != 0) & valid)
+		.clk, .a, .b, .quot(divresult), .rem(remresult),
+		.data_ok(divbubble), .valid(((alufunc == DIV || alufunc == REM) && b != 0) & valid)
 	);
 	divu divu (
-		.clk, .srca, .srcb, .quot(divuresult), .rem(remuresult),
-		.data_ok(divububble), .valid(((alufunc == DIVU || alufunc == REMU) && srcb != 0) & valid)
+		.clk, .a, .b, .quot(divuresult), .rem(remuresult),
+		.data_ok(divububble), .valid(((alufunc == DIVU || alufunc == REMU) && b != 0) & valid)
 	);
 endmodule
 

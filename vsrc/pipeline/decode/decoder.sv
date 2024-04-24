@@ -17,10 +17,7 @@ module decoder
     wire [2:0] funct3 =    instr[14:12];
     wire [6:0] f7_first =  instr[31:25];
 
-    always_comb begin
-        op = ALUI;
-        regwrite = 1'b1;
-
+    always_comb
         unique case(instr[6:0])
             F7_ALUI: begin
                 op = ALUI;
@@ -94,12 +91,7 @@ module decoder
                     'b010: alufunc = SLT;
                     'b011: alufunc = SLTU;
                     'b001: alufunc = SLL;
-                    'b101: begin
-                        if (instr[30])
-                            alufunc = SRA;
-                        else
-                            alufunc = SRL;
-                    end
+                    'b101: alufunc = instr[30] ? SRA : SRL;
                 endcase 
             end
 
@@ -216,9 +208,8 @@ module decoder
                 alufunc = ADD;
             end
 
-            default: begin end
+            default: op = ALUI;
         endcase
-    end
 endmodule
 
 `endif

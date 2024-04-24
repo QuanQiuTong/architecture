@@ -11,70 +11,56 @@
 module immediate
 	import common::*;
 	import pipes::*;(
-    input word_t scrb,scra,
+    input word_t scrb, scra,
     input u64 pc,
-	input contral_t ctl,
+    input contral_t ctl,
     input u32 instr,
-    output word_t rd2,rd1,
+    output word_t rd2, rd1,
     output u1 bubble,
-    input logic bubble1,bubble2
+    input logic bubble1, bubble2
 );
-    always_comb begin      
-        bubble=0;
-        rd1=scra;
-        rd2=scrb;
-        unique case(ctl.op)
-            ALU, ALUW: begin
-                if (ctl.op==ALUW) begin
-                    if (ctl.alufunc==DIV||ctl.alufunc==REM)begin
-                        rd1={{32{scra[31]}},scra[31:0]};
-                        rd2={{32{scrb[31]}},scrb[31:0]};
-                    end
-                    else if (ctl.alufunc==DIVU||ctl.alufunc==REMU) begin
-                        rd1={{32{1'b0}},scra[31:0]};
-                        rd2={{32{1'b0}},scrb[31:0]};
-                    end
-                    bubble=bubble1|bubble2;
+    always_comb begin
+        bubble = 0;
+        rd1 = scra;
+        rd2 = scrb;
+        unique case (ctl.op)
+             ALUW: begin
+                if (ctl.alufunc == DIV || ctl.alufunc == REM) begin
+                    rd1 = {{32{scra[31]}}, scra[31:0]};
+                    rd2 = {{32{scrb[31]}}, scrb[31:0]};
                 end
-                else begin
-                    rd1=scra;
-                    rd2=scrb;
-                    bubble=bubble1|bubble2;
+                else if (ctl.alufunc == DIVU || ctl.alufunc == REMU) begin
+                    rd1 = {{32{1'b0}}, scra[31:0]};
+                    rd2 = {{32{1'b0}}, scrb[31:0]};
                 end
+                bubble = bubble1 | bubble2;
             end
-            ALUI, ALUIW: begin
-                rd2={{52{instr[31]}},instr[31:20]};
-                bubble=bubble1;
+            ALU: begin
+                rd1 = scra;
+                rd2 = scrb;
+                bubble = bubble1 | bubble2;
             end
-            LUI : begin
-                rd2={{32{instr[31]}},instr[31:12],{12{1'b0}}};
-                bubble=bubble1;
+            ALUI, ALUIW, LD: begin
+                rd2 = {{52{instr[31]}}, instr[31:20]};
+                bubble = bubble1;
             end
-            LD: begin
-                rd2={{52{instr[31]}},instr[31:20]};
-                bubble=bubble1;
+            LUI: begin
+                rd2 = {{32{instr[31]}}, instr[31:12], 12'b0};
+                bubble = bubble1;
             end
             SD: begin
-                rd2={{52{instr[31]}},instr[31:25],instr[11:7]};
-                bubble=bubble1;
+                rd2 = {{52{instr[31]}}, instr[31:25], instr[11:7]};
+                bubble = bubble1;
             end
             AUIPC: begin
-                rd1=pc;
-                rd2={{32{instr[31]}},instr[31:12],{12{1'b0}}};
+                rd1 = pc;
+                rd2 = {{32{instr[31]}}, instr[31:12], 12'b0};
             end
-            JAL: begin
-                rd1=pc;
-                rd2=4;
+            JAL, JALR: begin
+                rd1 = pc;
+                rd2 = 4;
             end
-            JALR: begin
-                rd1=pc;
-                rd2=4;
-            end
-            default: begin
-                rd1=scra;
-                rd2=scrb;
-                bubble=bubble1|bubble2;
-            end
+            default: bubble = bubble1 | bubble2;
         endcase 
     end
 endmodule
