@@ -47,10 +47,6 @@ parameter F7_FIRST_MUL=7'b0000001;
 typedef enum logic[5:0] {
 	UNKNOWN,ALUI,ALU,ALUW,ALUIW,LUI,JAL,BEQ,LD,SD,AUIPC,JALR,BNE,BLT,BGE,BLTU,BGEU
 } decode_op_t;
-typedef enum logic [4:0] {
-	NOTALU,ALU_ADD,ALU_XOR,ALU_OR,ALU_AND,ALU_SUB,ALU_LUI,ALU_COMPARE,ALU_SLT,
-	ALU_SLTU,ALU_SLL,ALU_SRL,ALU_SRA,ALU_MULT,ALU_DIV,ALU_REM,ALU_DIVU,ALU_REMU
-} alufunc_t;
 typedef struct packed {
 	u1 ismem;
 	creg_addr_t dst;// 不是写操作该数置为0

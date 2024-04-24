@@ -9,39 +9,37 @@
 module decoder 
     import common::*;
     import pipes::*;(
-    input [31:0] raw_instr,
+    input [31:0] instr,
     output decode_op_t op,
 	output alufunc_t alufunc,
 	output logic regwrite
 );
-
-    wire [6:0] funct7 =    raw_instr[6:0];
-    wire [2:0] funct3 =    raw_instr[14:12];
-    wire [6:0] f7_first =  raw_instr[31:25];
+    wire [2:0] funct3 =    instr[14:12];
+    wire [6:0] f7_first =  instr[31:25];
 
     always_comb begin
         op = ALUI;
-        alufunc = ALU_ADD;
+        alufunc = ADD;
         regwrite = 1'b1;
 
-        unique case(funct7)
+        unique case(instr[6:0])
             F7_ALUI: begin
                 op = ALUI;
                 regwrite = 1'b1;
 
                 unique case(funct3)
-                    F3_ADD: alufunc = ALU_ADD;
-                    F3_XOR: alufunc = ALU_XOR;
-                    F3_OR: alufunc = ALU_OR;
-                    F3_AND: alufunc = ALU_AND;
-                    F3_SLT: alufunc = ALU_SLT;
-                    F3_SLTU: alufunc = ALU_SLTU;
-                    F3_SLL: alufunc = ALU_SLL;
+                    F3_ADD: alufunc = ADD;
+                    F3_XOR: alufunc = XOR;
+                    F3_OR: alufunc = OR;
+                    F3_AND: alufunc = AND;
+                    F3_SLT: alufunc = SLT;
+                    F3_SLTU: alufunc = SLTU;
+                    F3_SLL: alufunc = SLL;
                     F3_SR: begin
-                        if (raw_instr[30])
-                            alufunc = ALU_SRA;
+                        if (instr[30])
+                            alufunc = SRA;
                         else
-                            alufunc = ALU_SRL;
+                            alufunc = SRL;
                     end
                 endcase 
             end
@@ -53,40 +51,40 @@ module decoder
                 unique case(funct3)
                     F3_ADD: begin
                         if (f7_first == F7_FIRST_ADD)
-                            alufunc = ALU_ADD;
+                            alufunc = ADD;
                         else if (f7_first == F7_FIRST_SUB)
-                            alufunc = ALU_SUB;
+                            alufunc = SUB;
                         else if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_MULT;
+                            alufunc = MULT;
                     end
                     F3_XOR: begin
                         if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_DIV;
+                            alufunc = DIV;
                         else
-                            alufunc = ALU_XOR;
+                            alufunc = XOR;
                     end
                     F3_OR: begin
                         if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_REM;
+                            alufunc = REM;
                         else
-                            alufunc = ALU_OR;
+                            alufunc = OR;
                     end
                     F3_AND: begin
                         if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_REMU;
+                            alufunc = REMU;
                         else
-                            alufunc = ALU_AND;
+                            alufunc = AND;
                     end
-                    F3_SLT: alufunc = ALU_SLT;
-                    F3_SLTU: alufunc = ALU_SLTU;
-                    F3_SLL: alufunc = ALU_SLL;
+                    F3_SLT: alufunc = SLT;
+                    F3_SLTU: alufunc = SLTU;
+                    F3_SLL: alufunc = SLL;
                     F3_SR: begin
                         if (f7_first == F7_FIRST_SUB)
-                            alufunc = ALU_SRA;
+                            alufunc = SRA;
                         else if (f7_first == F7_FIRST_ADD)
-                            alufunc = ALU_SRL;
+                            alufunc = SRL;
                         else if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_DIVU;
+                            alufunc = DIVU;
                     end
                 endcase 
             end
@@ -96,18 +94,18 @@ module decoder
                 regwrite = 1'b1;
 
                 unique case(funct3)
-                    F3_ADD: alufunc = ALU_ADD;
-                    F3_XOR: alufunc = ALU_XOR;
-                    F3_OR: alufunc = ALU_OR;
-                    F3_AND: alufunc = ALU_AND;
-                    F3_SLT: alufunc = ALU_SLT;
-                    F3_SLTU: alufunc = ALU_SLTU;
-                    F3_SLL: alufunc = ALU_SLL;
+                    F3_ADD: alufunc = ADD;
+                    F3_XOR: alufunc = XOR;
+                    F3_OR: alufunc = OR;
+                    F3_AND: alufunc = AND;
+                    F3_SLT: alufunc = SLT;
+                    F3_SLTU: alufunc = SLTU;
+                    F3_SLL: alufunc = SLL;
                     F3_SR: begin
-                        if (raw_instr[30])
-                            alufunc = ALU_SRA;
+                        if (instr[30])
+                            alufunc = SRA;
                         else
-                            alufunc = ALU_SRL;
+                            alufunc = SRL;
                     end
                 endcase 
             end
@@ -119,40 +117,40 @@ module decoder
                 unique case(funct3)
                     F3_ADD: begin
                         if (f7_first == F7_FIRST_ADD)
-                            alufunc = ALU_ADD;
+                            alufunc = ADD;
                         else if (f7_first == F7_FIRST_SUB)
-                            alufunc = ALU_SUB;
+                            alufunc = SUB;
                         else if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_MULT;
+                            alufunc = MULT;
                     end
                     F3_XOR: begin
                         if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_DIV;
+                            alufunc = DIV;
                         else
-                            alufunc = ALU_XOR;
+                            alufunc = XOR;
                     end
                     F3_OR: begin
                         if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_REM;
+                            alufunc = REM;
                         else
-                            alufunc = ALU_OR;
+                            alufunc = OR;
                     end
                     F3_AND: begin
                         if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_REMU;
+                            alufunc = REMU;
                         else
-                            alufunc = ALU_AND;
+                            alufunc = AND;
                     end
-                    F3_SLT: alufunc = ALU_SLT;
-                    F3_SLTU: alufunc = ALU_SLTU;
-                    F3_SLL: alufunc = ALU_SLL;
+                    F3_SLT: alufunc = SLT;
+                    F3_SLTU: alufunc = SLTU;
+                    F3_SLL: alufunc = SLL;
                     F3_SR: begin
                         if (f7_first == F7_FIRST_SUB)
-                            alufunc = ALU_SRA;
+                            alufunc = SRA;
                         else if (f7_first == F7_FIRST_ADD)
-                            alufunc = ALU_SRL;
+                            alufunc = SRL;
                         else if (f7_first == F7_FIRST_MUL)
-                            alufunc = ALU_DIVU;
+                            alufunc = DIVU;
                     end
                 endcase 
             end
@@ -160,13 +158,13 @@ module decoder
             F7_LUI: begin
                 op = LUI;
                 regwrite = 1'b1;
-                alufunc = ALU_LUI;
+                alufunc = CPYB;
             end
 
             F7_JAL: begin
                 op = JAL;
                 regwrite = 1'b1;
-                alufunc = ALU_ADD;
+                alufunc = ADD;
             end
 
             F7_BRANCH: begin
@@ -175,27 +173,27 @@ module decoder
                 unique case(funct3)
                     F3_BEQ: begin
                         op = BEQ;
-                        alufunc = ALU_COMPARE;
+                        alufunc = COMPARE;
                     end
                     F3_BNE: begin
                         op = BNE;
-                        alufunc = ALU_COMPARE;
+                        alufunc = COMPARE;
                     end
                     F3_BLT: begin
                         op = BLT;
-                        alufunc = ALU_SLT;
+                        alufunc = SLT;
                     end
                     F3_BGE: begin
                         op = BGE;
-                        alufunc = ALU_SLT;
+                        alufunc = SLT;
                     end
                     F3_BLTU: begin
                         op = BLTU;
-                        alufunc = ALU_SLTU;
+                        alufunc = SLTU;
                     end
                     F3_BGEU: begin
                         op = BGEU;
-                        alufunc = ALU_SLTU;
+                        alufunc = SLTU;
                     end
                     default: begin end
                 endcase 
@@ -204,25 +202,25 @@ module decoder
             F7_LD: begin
                 op = LD;
                 regwrite = 1'b1;
-                alufunc = ALU_ADD;
+                alufunc = ADD;
             end
 
             F7_SD: begin
                 op = SD;
                 regwrite = 1'b0;
-                alufunc = ALU_ADD;
+                alufunc = ADD;
             end
 
             F7_AUIPC: begin
                 op = AUIPC;
                 regwrite = 1'b1;
-                alufunc = ALU_ADD;
+                alufunc = ADD;
             end
 
             F7_JALR: begin
                 op = JALR;
                 regwrite = 1'b1;
-                alufunc = ALU_ADD;
+                alufunc = ADD;
             end
 
             default: begin end

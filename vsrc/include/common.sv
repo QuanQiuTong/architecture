@@ -268,6 +268,10 @@ typedef struct packed {
     //             DIVUW = 5'b11001,
     //             REMW = 5'b11010,
     //             REMUW = 5'b11011;
+typedef enum logic [4:0] {
+	NOTALU,ADD,XOR,OR,AND,SUB,CPYB,COMPARE,SLT,
+	SLTU,SLL,SRL,SRA,MULT,DIV,REM,DIVU,REMU
+} alufunc_t;
 
 endpackage
 `endif

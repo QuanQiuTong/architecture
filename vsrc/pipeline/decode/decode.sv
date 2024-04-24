@@ -15,9 +15,7 @@ module decode
     import pipes::*;(
     input               clk, reset, stope, stopm, branch,
     output logic        stopd,
-    input  logic        valid,
-    input [31:0]        instr,
-    input [63:0]        pc,
+    input  fetch_data_t dataF,
     output decode_data_t dataD,
     input word_t        q1, q2,
     output [4:0]        rs1, rs2,
@@ -28,7 +26,7 @@ module decode
     logic bubble, bubble1, bubble2;
 
     decoder decoder(
-        .raw_instr(instr),
+        .instr(dataF.instr),
         .op(ctl.op),
         .alufunc(ctl.alufunc),
         .regwrite(ctl.regwrite)
@@ -59,9 +57,9 @@ module decode
     immediate immediate(
         .scra(temp1),
         .scrb(temp2),
-        .pc(pc),
+        .pc(dataF.pc),
         .ctl(ctl),
-        .instr(instr),
+        .instr(dataF.instr),
         .rd1,
         .rd2,
         .bubble,
@@ -69,18 +67,18 @@ module decode
         .bubble2
     );
 
-    assign rs2 = instr[24:20];
-    assign rs1 = instr[19:15];
+    assign rs2 = dataF.instr[24:20];
+    assign rs1 = dataF.instr[19:15];
 
     assign stopd = bubble;
 
     always_ff @(posedge clk)
         if (!stope & !stopm) begin 
-            dataD.valid <= ~(branch | bubble) & valid;
-            dataD.pc <= pc;
-            dataD.instr <= instr;
+            dataD.valid <= ~(branch | bubble) & dataF.valid;
+            dataD.pc <= dataF.pc;
+            dataD.instr <= dataF.instr;
             dataD.ctl <= ctl;
-            dataD.dst <= instr[11:7];
+            dataD.dst <= dataF.instr[11:7];
             dataD.srca <= rd1;
             dataD.srcb <= rd2;
             dataD.rd1 <= temp1;

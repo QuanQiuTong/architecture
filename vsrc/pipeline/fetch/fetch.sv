@@ -3,14 +3,15 @@
 
 `ifdef VERILATOR
 `include "include/common.sv"
+`include "include/pipes.sv"
+
 `endif
 
 module fetch
-    import common::*;(
+    import common::*;
+    import pipes::*;(
     input               clk, reset, branch, stop,
-    output logic        valid,
-    output reg   [31:0] instr,
-    output reg   [63:0] pc,
+    output fetch_data_t dataF,
     output ibus_req_t   ireq,
     input ibus_resp_t   iresp,
     input [63:0]        jump
@@ -29,13 +30,13 @@ module fetch
     always_ff @(posedge clk)
         if (reset) begin
             _pc <= 64'h80000000;
-            valid <= 0;
+            dataF.valid <= 0;
         end else begin
             _pc <= pc_next;
             if (!stop) begin
-                valid <= iresp.data_ok & ~branch;
-                instr <= iresp.data;
-                pc <= _pc;
+                dataF.valid <= iresp.data_ok & ~branch;
+                dataF.instr <= iresp.data;
+                dataF.pc <= _pc;
             end
         end
 endmodule

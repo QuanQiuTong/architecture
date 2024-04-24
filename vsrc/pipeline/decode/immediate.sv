@@ -26,11 +26,11 @@ module immediate
         unique case(ctl.op)
             ALU, ALUW: begin
                 if (ctl.op==ALUW) begin
-                    if (ctl.alufunc==ALU_DIV||ctl.alufunc==ALU_REM)begin
+                    if (ctl.alufunc==DIV||ctl.alufunc==REM)begin
                         rd1={{32{scra[31]}},scra[31:0]};
                         rd2={{32{scrb[31]}},scrb[31:0]};
                     end
-                    else if (ctl.alufunc==ALU_DIVU||ctl.alufunc==ALU_REMU) begin
+                    else if (ctl.alufunc==DIVU||ctl.alufunc==REMU) begin
                         rd1={{32{1'b0}},scra[31:0]};
                         rd2={{32{1'b0}},scrb[31:0]};
                     end

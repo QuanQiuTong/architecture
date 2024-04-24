@@ -20,6 +20,7 @@ module core
 	input  dbus_resp_t dresp,
 	input  logic       trint, swint, exint
 );
+	fetch_data_t  dataF;
 	decode_data_t dataD;
 	excute_data_t dataE;
 	memory_data_t dataM;
@@ -44,16 +45,11 @@ module core
 		.ireq,.iresp,
 		.branch,.jump,
 		.stop(stopd | stope | stopm),
-		.valid(fvalid),
-		.instr(instr),
-		.pc
+		.dataF
 	);
 	decode decode(
 		.clk,.reset,
-		.valid(fvalid),
-		.instr(instr),
-		.pc(pc),
-		.dataD,
+		.dataF,.dataD,
 		.rs1,.rs2,.q1,.q2,
 		.branch,
 		.trane,.tranm,

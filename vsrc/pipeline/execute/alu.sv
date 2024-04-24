@@ -1,5 +1,5 @@
-`ifndef __ALU_SV
-`define __ALU_SV
+`ifndef __SV
+`define __SV
 
 `ifdef VERILATOR
 `include "include/common.sv"
@@ -36,23 +36,23 @@ module alu
 		bubble=0;
 		debug=0;
 		unique case(alufunc)
-			ALU_ADD: c = a + b;
-			ALU_XOR: c = a ^ b;
-			ALU_OR : c = a | b; 
-			ALU_AND: c = a & b;
-			ALU_SUB: c = a - b;
-			ALU_LUI: c = b;
-			ALU_COMPARE: c ={63'b0, (a==b)};
-			ALU_SLT: c= $signed(a) < $signed(b) ? 64'b1 : 64'b0;
-			ALU_SLTU: c={63'b0,({1'b0,a}<{1'b0,b})};
-			ALU_SLL: c=a<<b[5:0];
-			ALU_SRL: c=a>>b[5:0];
-			ALU_SRA: c = $signed(a) >>> b[5:0];
-			ALU_MULT: begin
+			ADD: c = a + b;
+			XOR: c = a ^ b;
+			OR : c = a | b; 
+			AND: c = a & b;
+			SUB: c = a - b;
+			CPYB: c = b;
+			COMPARE: c ={63'b0, (a==b)};
+			SLT: c= $signed(a) < $signed(b) ? 64'b1 : 64'b0;
+			SLTU: c={63'b0,({1'b0,a}<{1'b0,b})};
+			SLL: c=a<<b[5:0];
+			SRL: c=a>>b[5:0];
+			SRA: c = $signed(a) >>> b[5:0];
+			MULT: begin
 				c=multiresult+(srcb[0]?srca:0);
 				bubble=~multibubble;
 			end
-			ALU_DIV: begin
+			DIV: begin
 				if (srcb==0) begin
 					c='1;
 					bubble=0;
@@ -63,7 +63,7 @@ module alu
 					bubble=~divbubble;
 				end
 			end
-			ALU_REM: begin
+			REM: begin
 				if (srcb==0) begin
 					c=srca;
 					bubble=0;
@@ -73,7 +73,7 @@ module alu
 					bubble=~divbubble;
 				end
 			end
-			ALU_DIVU: begin
+			DIVU: begin
 				if (srcb==0) begin
 					c='1;
 					bubble=0;
@@ -83,7 +83,7 @@ module alu
 					bubble=~divububble;
 				end
 			end
-			ALU_REMU: begin
+			REMU: begin
 				if (srcb==0) begin
 					c=srca;
 					bubble=0;
@@ -99,9 +99,9 @@ module alu
 		endcase
 		if (choose) begin
 			unique case (ctl.alufunc)
-				ALU_SLL: c = a << b[4:0];
-				ALU_SRL: c[31:0] = a[31:0] >> b[4:0];
-				ALU_SRA: c[31:0] = $signed(a[31:0]) >>> b[4:0];
+				SLL: c = a << b[4:0];
+				SRL: c[31:0] = a[31:0] >> b[4:0];
+				SRA: c[31:0] = $signed(a[31:0]) >>> b[4:0];
 				default: begin
 				end
 			endcase
@@ -113,15 +113,15 @@ module alu
 	end
 	multi multi(
 		.clk,.srca,.srcb,.result(multiresult),
-		.data_ok(multibubble),.valid((alufunc==ALU_MULT)&valid)
+		.data_ok(multibubble),.valid((alufunc==MULT)&valid)
 	);
 	div div(
 		.clk,.srca,.srcb,.quot(divresult),.rem(remresult),
-		.data_ok(divbubble),.valid(((alufunc==ALU_DIV||alufunc==ALU_REM)&&srcb!=0)&valid)
+		.data_ok(divbubble),.valid(((alufunc==DIV||alufunc==REM)&&srcb!=0)&valid)
 	);
 	divu divu(
 		.clk,.srca,.srcb,.quot(divuresult),.rem(remuresult),
-		.data_ok(divububble),.valid(((alufunc==ALU_DIVU||alufunc==ALU_REMU)&&srcb!=0)&valid)
+		.data_ok(divububble),.valid(((alufunc==DIVU||alufunc==REMU)&&srcb!=0)&valid)
 	);
 endmodule
 
