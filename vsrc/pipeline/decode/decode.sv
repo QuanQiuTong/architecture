@@ -6,20 +6,18 @@
 `include "include/pipes.sv"
 `include "pipeline/decode/decoder.sv"
 `include "pipeline/decode/immediate.sv"
-`include "pipeline/decode/select.sv"
-`else
 `endif
 
 module decode
     import common::*;
     import pipes::*;(
-    input               clk, reset, stope, stopm, branch,
-    output logic        stopd,
-    input  fetch_data_t dataF,
+    input                clk, reset, stope, stopm, branch,
+    output logic         stopd,
+    input  fetch_data_t  dataF,
     output decode_data_t dataD,
-    input word_t        q1, q2,
-    output [4:0]        rs1, rs2,
-    input tran_t        trane, tranm, trand
+    input  word_t        q1, q2,
+    output [4:0]         rs1, rs2,
+    input  tran_t        trane, tranm, trand
 );
     contral_t ctl;
     word_t temp1, temp2;
@@ -32,39 +30,11 @@ module decode
         .regwrite(ctl.regwrite)
     );
 
-    select select1(
-        .ra(rs1),
-        .rd(q1),
-        .result(temp1),
-        .trane,
-        .tranm,
-        .trand,
-        .bubble(bubble1)
-    );
-    // always_comb begin
-    //     temp1 = q1;
-    //     bubble1 = 0;
-    //     if (rs1 != 0) begin
-    //         if (rs1 == trand.dst)
-    //             bubble1 = 1;
-    //         else if (rs1 == trane.dst) begin
-    //             temp1 = trane.data;
-    //             bubble1 = trane.ismem;
-    //         end
-    //         else if (rs1 == tranm.dst)
-    //             temp1 = tranm.data;
-    //     end
-    // end
+    assign temp1 = rs1 != 0 ? (rs1 == trane.dst ? trane.data : rs1 == tranm.dst ? tranm.data : q1) : q1;
+    assign bubble1 = rs1 != 0 && (rs1 == trand.dst || (rs1 == trane.dst && trane.ismem));
 
-    select select2(
-        .ra(rs2),
-        .rd(q2),
-        .result(temp2),
-        .trane,
-        .tranm,
-        .trand,
-        .bubble(bubble2)
-    );
+    assign temp2 = rs2 != 0 ? (rs2 == trane.dst ? trane.data : rs2 == tranm.dst ? tranm.data : q2) : q2;
+    assign bubble2 = rs2 != 0 && (rs2 == trand.dst || (rs2 == trane.dst && trane.ismem));
 
     word_t rd1, rd2;
 

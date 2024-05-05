@@ -33,8 +33,7 @@ module multi(
                 if (b[i]) result += (a << i);
                 i++;
             end 
-        end
-        else begin
+        end else begin
             i = 0;
             data_ok = 0;
             waiting = 0;
