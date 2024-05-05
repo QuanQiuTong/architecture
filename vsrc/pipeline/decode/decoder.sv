@@ -6,10 +6,10 @@
 
 module decoder 
     import common::*;(
-    input [31:0] instr,
+    input [31:0]       instr,
     output decode_op_t op,
-	output alufunc_t alufunc,
-	output logic regwrite
+	output alufunc_t   alufunc,
+	output logic       regwrite
 );
     wire [2:0] funct3 =  instr[14:12];
     wire [6:0] funct7 =  instr[31:25];

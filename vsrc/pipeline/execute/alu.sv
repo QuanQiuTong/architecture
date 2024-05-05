@@ -1,5 +1,5 @@
-`ifndef __SV
-`define __SV
+`ifndef __ALU_SV
+`define __ALU_SV
 
 `ifdef VERILATOR
 `include "include/common.sv"
@@ -10,17 +10,17 @@
 
 module alu
 	import common::*;(
-	input u1 clk,
-	input u64 a, b,
+	input           clk,
+	input [63:0]    a, b,
 	input alufunc_t alufunc,
-	output u64 result,
-	input logic choose,
-	input logic valid,
-	output u1 bubble
+	output [63:0]   result,
+	input           choose,
+	input           valid,
+	output logic    bubble
 );
 	logic [63:0] c;
-	u1 multibubble, divbubble, divububble;
-	u64 multiresult, quot, rem, quotu, remu;
+	wire multibubble, divbubble, divububble;
+	wire[63:0] multiresult, quot, rem, quotu, remu;
 	always_comb begin
 		unique case (alufunc)
 			ADD:  c = a + b;

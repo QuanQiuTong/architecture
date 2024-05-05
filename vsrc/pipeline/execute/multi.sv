@@ -2,11 +2,11 @@
 `define __MULTI_SV
 
 module multi(
-    input   clk,
-    input [63:0] a, b,
+    input            clk,
+    input [63:0]     a, b,
     output reg[63:0] result,
-    output logic data_ok,
-    input valid
+    output logic     data_ok,
+    input            valid
 );
     int i = 0;
     logic waiting = 0;

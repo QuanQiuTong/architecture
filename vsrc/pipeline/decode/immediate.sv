@@ -4,20 +4,18 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/pipes.sv"
-`else
-
 `endif
 
 module immediate
 	import common::*;
 	import pipes::*;(
-    input word_t scrb, scra,
-    input u64 pc,
+    input word_t    scrb, scra,
+    input u64       pc,
     input control_t ctl,
-    input u32 instr,
-    output word_t rd2, rd1,
-    output u1 bubble,
-    input logic bubble1, bubble2
+    input u32       instr,
+    output word_t   rd2, rd1,
+    output u1       bubble,
+    input logic     bubble1, bubble2
 );
     always_comb begin
         rd1 = scra;

@@ -2,10 +2,10 @@
 `define __REGFILE_SV
 
 module regfile (
-	input			clk, reset, we,
-	input  [4:0]	rs1, rs2, rd,
-	input  [63:0]	in,
-	output [63:0]	q1, q2
+	input		  clk, reset, we,
+	input  [4:0]  rs1, rs2, rd,
+	input  [63:0] in,
+	output [63:0] q1, q2
 );
 	reg[63:0] regs[31:0], regs_nxt[31:0];
 

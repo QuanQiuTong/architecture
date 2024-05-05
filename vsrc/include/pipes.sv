@@ -1,3 +1,5 @@
+// 参考往年 https://gitlab.com/fudan-systa/arch-2023spring-fudan/-/blob/main/vsrc/include/pipes.sv
+
 `ifndef __PIPES_SV
 `define __PIPES_SV
 `ifdef VERILATOR

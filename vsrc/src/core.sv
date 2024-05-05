@@ -1,5 +1,3 @@
-`ifndef __CORE_SV
-`define __CORE_SV
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/pipes.sv"
@@ -12,7 +10,7 @@
 module core 
 	import common::*;
 	import pipes::*;(
-	input logic clk, reset,
+	input  logic       clk, reset,
 	output ibus_req_t  ireq,
 	input  ibus_resp_t iresp,
 	output dbus_req_t  dreq,
@@ -154,4 +152,3 @@ module core
 	      );
 `endif
 endmodule
-`endif
