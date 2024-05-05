@@ -3,21 +3,18 @@
 
 `ifdef VERILATOR
 `include "include/common.sv"
-`include "include/pipes.sv"
 `include "pipeline/execute/multi.sv"
 `include "pipeline/execute/div.sv"
 `include "pipeline/execute/divu.sv"
 `endif
 
 module alu
-	import common::*;
-	import pipes::*;(
+	import common::*;(
 	input u1 clk,
 	input u64 a, b,
 	input alufunc_t alufunc,
 	output u64 result,
 	input logic choose,
-	input contral_t ctl,
 	input logic valid,
 	output u1 bubble
 );
@@ -46,7 +43,7 @@ module alu
 			default: begin end
 		endcase
 		if (choose) begin
-			unique case (ctl.alufunc)
+			unique case (alufunc)
 				SLL: c = a << b[4:0];
 				SRL: c[31:0] = a[31:0] >> b[4:0];
 				SRA: c[31:0] = $signed(a[31:0]) >>> b[4:0];

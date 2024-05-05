@@ -19,7 +19,7 @@ module decode
     output [4:0]         rs1, rs2,
     input  tran_t        trane, tranm, trand
 );
-    contral_t ctl;
+    control_t ctl;
     word_t temp1, temp2;
     logic bubble, bubble1, bubble2;
 

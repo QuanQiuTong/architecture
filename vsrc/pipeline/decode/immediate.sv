@@ -13,7 +13,7 @@ module immediate
 	import pipes::*;(
     input word_t scrb, scra,
     input u64 pc,
-    input contral_t ctl,
+    input control_t ctl,
     input u32 instr,
     output word_t rd2, rd1,
     output u1 bubble,
