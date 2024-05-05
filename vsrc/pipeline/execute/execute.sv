@@ -5,7 +5,6 @@
 `include "include/common.sv"
 `include "include/pipes.sv"
 `include "pipeline/execute/alu.sv"
-`include "pipeline/execute/offset.sv"
 `else
 
 `endif
@@ -35,16 +34,25 @@ module execute
         .choose(ctl.op == ALUW || ctl.op == ALUIW),
         .ctl, .bubble, .valid(dataD.valid)
     );
-    offset offset (
-        .valid(dataD.valid),
-        .instr(instr),
-        .op(ctl.op),
-        .choose(alu_result),
-        .jump,
-        .pc(dataD.pc),
-        .jumppc(dataD.rd1 + {{52{instr[31]}}, instr[31:20]})
-    );
-    assign branch = ctl.op == JAL || ctl.op == JALR || ctl.op == BZ || ctl.op == BNZ;
+    always_comb 
+        unique case(ctl.op)
+            JAL: 
+                jump = dataD.pc + {{43{instr[31]}}, instr[31], instr[19:12] , instr[20] , instr[30:21], 1'b0};
+            BZ:
+                if (alu_result == 1) 
+                    jump = dataD.pc + {{51{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+                else 
+                    jump = dataD.pc + 4;
+            BNZ: 
+                if (alu_result == 0) 
+                    jump = dataD.pc + {{51{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+                else 
+                    jump = dataD.pc + 4;
+            JALR:
+                jump = dataD.rd1 + {{52{instr[31]}}, instr[31:20]};
+            default:  jump = dataD.pc; 
+    endcase 
+    assign branch = ctl.op == JAL || ctl.op == JALR || ctl.op == BZ || ctl.op == BNZ; // && dataD.valid;
 
     assign stope = bubble & dataD.valid;
     always_ff @(posedge clk) begin
