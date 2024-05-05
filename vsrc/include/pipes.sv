@@ -26,7 +26,7 @@ parameter F7_FIRST_MUL=7'b0000001;
 
 /* Define pipeline structures here */
 typedef enum logic[5:0] {
-	NOP,ALUI,ALU,ALUW,ALUIW,LUI,JAL,BEQ,LD,SD,AUIPC,JALR,BNE,BLT,BGE,BLTU,BGEU
+	NOP,ALUI,ALU,ALUW,ALUIW,LUI,JAL,BEQ,LD,SD,AUIPC,JALR,BZ,BNZ
 } decode_op_t;
 typedef struct packed {
 	u1 ismem;

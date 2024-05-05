@@ -157,27 +157,27 @@ module decoder
 
                 unique case(funct3)
                     'b000: begin
-                        op = BEQ;
+                        op = BZ;
                         alufunc = COMPARE;
                     end
                     'b001: begin
-                        op = BNE;
+                        op = BNZ;
                         alufunc = COMPARE;
                     end
                     'b100: begin
-                        op = BLT;
+                        op = BZ;
                         alufunc = SLT;
                     end
                     'b101: begin
-                        op = BGE;
+                        op = BNZ;
                         alufunc = SLT;
                     end
                     'b110: begin
-                        op = BLTU;
+                        op = BZ;
                         alufunc = SLTU;
                     end
                     'b111: begin
-                        op = BGEU;
+                        op = BNZ;
                         alufunc = SLTU;
                     end
                     default: begin end

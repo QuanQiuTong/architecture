@@ -45,6 +45,7 @@ module execute
         .pc(dataD.pc),
         .jumppc(dataD.rd1 + {{52{instr[31]}}, instr[31:20]})
     );
+
     assign stope = bubble & dataD.valid;
     always_ff @(posedge clk) begin
         if (!stopm) begin

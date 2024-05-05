@@ -27,7 +27,7 @@ module offset
                 jump=pc+{{43{instr[31]}},{instr[31]},{instr[19:12]},{instr[20]},{instr[30:21]},{1'b0}};
                 branch=valid;
             end
-            BEQ ,BLT, BLTU:begin
+            BZ:begin
                 if (choose==1) begin
                     jump=pc+{{51{instr[31]}},{instr[31]},{instr[7]},{instr[30:25]},{instr[11:8]},{1'b0}};
                     branch=valid;
@@ -37,7 +37,7 @@ module offset
                     branch=valid;
                 end
             end
-            BNE, BGE, BGEU: begin
+            BNZ: begin
                 if (choose==0) begin
                     jump=pc+{{51{instr[31]}},{instr[31]},{instr[7]},{instr[30:25]},{instr[11:8]},{1'b0}};
                     branch=valid;
