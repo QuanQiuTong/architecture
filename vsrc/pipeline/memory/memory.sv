@@ -10,10 +10,10 @@ module memory
     import common::*;
     import pipes::*;(
     input           clk, reset,
-    input excute_data_t  dataE,
+    input  excute_data_t dataE,
     output memory_data_t dataM,
     output dbus_req_t    dreq,
-    input dbus_resp_t    dresp,
+    input  dbus_resp_t   dresp,
     output logic         stopm
 );
     wire[2:0] funct3 = dataE.instr[14:12];

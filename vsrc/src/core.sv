@@ -23,11 +23,11 @@ module core
 	decode_data_t dataD;
 	excute_data_t dataE;
 	memory_data_t dataM;
-	wire[4:0] rs1,rs2;
-	word_t q1,q2;
-	u1 stopd,stope,stopm,branch;
-	u64 jump;
-	tran_t trane,tranm,trand;
+	wire[4:0]  rs1, rs2;
+	wire[63:0] q1, q2;
+	logic stopd,stope,stopm,branch;
+	wire[63:0] jump;
+	tran_t trane,tranm;
 
 	fetch fetch(
 		.clk, .reset,
@@ -41,8 +41,8 @@ module core
 		.dataF, .dataD,
 		.rs1, .rs2, .q1, .q2,
 		.branch,
-		.trane, .tranm,
-		.stopd, .stope, .stopm, .trand
+		.stopd, .stope, .stopm,
+		.trane, .tranm
 	);
 	execute execute(
 		.clk, .reset,
@@ -62,16 +62,10 @@ module core
 		.in(dataM.result),
 		.q1, .q2
 	);
-	logic skip = (dataM.ctl.op == SD || dataM.ctl.op == LD) && dataM.addr[31] == 0;
-	assign tranm.dst = (dataM.ctl.regwrite && dataM.valid) ? dataM.dst : 0;
-	assign tranm.data = dataM.result;
-	assign tranm.ismem = 1;
+	assign tranm = '{1, (dataM.ctl.regwrite && dataM.valid ? dataM.dst : 0), dataM.result};
 	assign trane.dst = (dataE.ctl.regwrite && dataE.valid) ? dataE.dst : 0;
 	assign trane.data = dataE.result;
 	assign trane.ismem = (dataE.ctl.op == SD || dataE.ctl.op == LD);
-	assign trand.dst = (dataD.ctl.regwrite && dataD.valid) ? dataD.dst : 0;
-	assign trand.data = 0;
-	assign trand.ismem = (dataD.ctl.op == SD || dataD.ctl.op == LD);
 
 `ifdef VERILATOR
 	DifftestInstrCommit DifftestInstrCommit(
@@ -81,7 +75,7 @@ module core
 		.valid              (~reset&dataM.valid),
 		.pc                 (dataM.pc),
 		.instr              (dataM.instr),
-		.skip               (skip),
+		.skip               ((dataM.ctl.op == SD || dataM.ctl.op == LD) && dataM.addr[31] == 0),
 		.isRVC              (0),
 		.scFailed           (0),
 		.wen                (dataM.ctl.regwrite),

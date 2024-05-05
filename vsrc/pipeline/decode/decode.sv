@@ -17,7 +17,7 @@ module decode
     output decode_data_t dataD,
     input  word_t        q1, q2,
     output [4:0]         rs1, rs2,
-    input  tran_t        trane, tranm, trand
+    input  tran_t        trane, tranm
 );
     control_t ctl;
     word_t temp1, temp2;
@@ -33,11 +33,13 @@ module decode
     assign rs2 = dataF.instr[24:20];
     assign rs1 = dataF.instr[19:15];
 
+    wire [4:0] _dst = (dataD.ctl.regwrite && dataD.valid) ? dataD.dst : 0;
+
     assign temp1 = rs1 != 0 ? (rs1 == trane.dst ? trane.data : rs1 == tranm.dst ? tranm.data : q1) : q1;
-    assign bubble1 = rs1 != 0 && (rs1 == trand.dst || (rs1 == trane.dst && trane.ismem));
+    assign bubble1 = rs1 != 0 && (rs1 == _dst || (rs1 == trane.dst && trane.ismem));
 
     assign temp2 = rs2 != 0 ? (rs2 == trane.dst ? trane.data : rs2 == tranm.dst ? tranm.data : q2) : q2;
-    assign bubble2 = rs2 != 0 && (rs2 == trand.dst || (rs2 == trane.dst && trane.ismem));
+    assign bubble2 = rs2 != 0 && (rs2 == _dst || (rs2 == trane.dst && trane.ismem));
 
     word_t rd1, rd2;
 

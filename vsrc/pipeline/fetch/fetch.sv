@@ -4,7 +4,6 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/pipes.sv"
-
 `endif
 
 module fetch
