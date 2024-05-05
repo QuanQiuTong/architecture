@@ -30,6 +30,9 @@ module decode
         .regwrite(ctl.regwrite)
     );
 
+    assign rs2 = dataF.instr[24:20];
+    assign rs1 = dataF.instr[19:15];
+
     assign temp1 = rs1 != 0 ? (rs1 == trane.dst ? trane.data : rs1 == tranm.dst ? tranm.data : q1) : q1;
     assign bubble1 = rs1 != 0 && (rs1 == trand.dst || (rs1 == trane.dst && trane.ismem));
 
@@ -50,9 +53,6 @@ module decode
         .bubble1,
         .bubble2
     );
-
-    assign rs2 = dataF.instr[24:20];
-    assign rs1 = dataF.instr[19:15];
 
     assign stopd = bubble;
 

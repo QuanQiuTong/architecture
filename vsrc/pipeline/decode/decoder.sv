@@ -156,7 +156,7 @@ module decoder
                 regwrite = 1'b0;
                 op = funct3[0] ? BNZ : BZ;
                 unique case(funct3[2:1])
-                    'b00: alufunc = COMPARE;
+                    'b00: alufunc = EQL;
                     'b01: begin end
                     'b10: alufunc = SLT;
                     'b11: alufunc = SLTU;

@@ -20,7 +20,6 @@ module immediate
     input logic bubble1, bubble2
 );
     always_comb begin
-        bubble = 0;
         rd1 = scra;
         rd2 = scrb;
         unique case (ctl.op)
@@ -36,7 +35,6 @@ module immediate
                 bubble = bubble1 | bubble2;
             end
             ALU: begin
-                rd1 = scra;
                 rd2 = scrb;
                 bubble = bubble1 | bubble2;
             end
@@ -55,10 +53,12 @@ module immediate
             AUIPC: begin
                 rd1 = pc;
                 rd2 = {{32{instr[31]}}, instr[31:12], 12'b0};
+                bubble = 0;
             end
             JAL, JALR: begin
                 rd1 = pc;
                 rd2 = 4;
+                bubble = 0;
             end
             default: bubble = bubble1 | bubble2;
         endcase 
