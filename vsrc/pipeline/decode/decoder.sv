@@ -154,33 +154,12 @@ module decoder
 
             F7_BRANCH: begin
                 regwrite = 1'b0;
-
-                unique case(funct3)
-                    'b000: begin
-                        op = BZ;
-                        alufunc = COMPARE;
-                    end
-                    'b001: begin
-                        op = BNZ;
-                        alufunc = COMPARE;
-                    end
-                    'b100: begin
-                        op = BZ;
-                        alufunc = SLT;
-                    end
-                    'b101: begin
-                        op = BNZ;
-                        alufunc = SLT;
-                    end
-                    'b110: begin
-                        op = BZ;
-                        alufunc = SLTU;
-                    end
-                    'b111: begin
-                        op = BNZ;
-                        alufunc = SLTU;
-                    end
-                    default: begin end
+                op = funct3[0] ? BNZ : BZ;
+                unique case(funct3[2:1])
+                    'b00: alufunc = COMPARE;
+                    'b01: begin end
+                    'b10: alufunc = SLT;
+                    'b11: alufunc = SLTU;
                 endcase 
             end
 

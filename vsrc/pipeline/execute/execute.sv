@@ -41,10 +41,10 @@ module execute
         .op(ctl.op),
         .choose(alu_result),
         .jump,
-        .branch,
         .pc(dataD.pc),
         .jumppc(dataD.rd1 + {{52{instr[31]}}, instr[31:20]})
     );
+    assign branch = ctl.op == JAL || ctl.op == JALR || ctl.op == BZ || ctl.op == BNZ;
 
     assign stope = bubble & dataD.valid;
     always_ff @(posedge clk) begin
