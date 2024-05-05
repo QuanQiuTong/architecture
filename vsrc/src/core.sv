@@ -29,12 +29,6 @@ module core
 	u64 jump;
 	tran_t trane,tranm,trand;
 
-	regfile regfile(
-		.clk, .reset, .we(dataM.ctl.regwrite&&dataM.valid),
-		.rs1, .rs2, .rd(dataM.dst),
-		.in(dataM.result),
-		.q1, .q2
-	);
 	fetch fetch(
 		.clk, .reset,
 		.ireq, .iresp,
@@ -61,6 +55,12 @@ module core
 		.dataE, .dataM,
 		.dreq, .dresp,
 		.stopm
+	);
+	regfile regfile(
+		.clk, .reset, .we(dataM.ctl.regwrite&&dataM.valid),
+		.rs1, .rs2, .rd(dataM.dst),
+		.in(dataM.result),
+		.q1, .q2
 	);
 	logic skip = (dataM.ctl.op == SD || dataM.ctl.op == LD) && dataM.addr[31] == 0;
 	assign tranm.dst = (dataM.ctl.regwrite && dataM.valid) ? dataM.dst : 0;
