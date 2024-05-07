@@ -53,6 +53,9 @@ test-lab5: sim
 test-labnorm: sim
 	TEST=$(TEST) ./build/emu --diff $(NEMU_HOME)/riscv64-nemu-interpreter-so -i ./ready-to-run/labnorm/labnorm-test.bin $(VOPT) || true
 
+all-test-rv64im: sim
+	TEST=$(TEST) ./build/emu --diff $(NEMU_HOME)/riscv64-nemu-interpreter-so -i ./ready-to-run/all-test-rv64im/all-test-rv64im.bin $(VOPT) || true
+
 clean:
 	rm -rf build
 
