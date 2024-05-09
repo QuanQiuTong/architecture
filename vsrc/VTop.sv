@@ -3,7 +3,7 @@
 
 `ifdef VERILATOR
 `include "include/common.sv"
-`include "pipeline/core.sv"
+`include "src/core.sv"
 `include "util/IBusToCBus.sv"
 `include "util/DBusToCBus.sv"
 `include "util/CBusArbiter.sv"
