@@ -49,7 +49,7 @@ module decoder
                 unique case(funct3)
                     'b000: alufunc = SUB;
                     'b101: alufunc = SRA;
-                    default: begin end
+                    default: alufunc = NOTALU;
                 endcase 
             else if(funct7 == 7'b0000001)
                 unique case(funct3)
@@ -58,8 +58,9 @@ module decoder
                     'b110: alufunc = REM;
                     'b111: alufunc = REMU;
                     'b101: alufunc = DIVU;
-                    default: begin end
+                    default: alufunc = NOTALU;
                 endcase
+            else alufunc = NOTALU;
         end
 
         7'b0011011: begin
@@ -97,7 +98,7 @@ module decoder
                 unique case(funct3)
                     'b000: alufunc = SUB;
                     'b101: alufunc = SRA;
-                    default: begin end
+                    default: alufunc = NOTALU;
                 endcase 
             else if(funct7 == 7'b0000001)
                 unique case(funct3)
@@ -106,8 +107,9 @@ module decoder
                     'b110: alufunc = REM;
                     'b111: alufunc = REMU;
                     'b101: alufunc = DIVU;
-                    default: begin end
+                    default: alufunc = NOTALU;
                 endcase
+            else alufunc = NOTALU;
         end
 
         7'b0110111: begin
@@ -127,7 +129,7 @@ module decoder
             op = funct3[0] ? BNZ : BZ;
             unique case(funct3[2:1])
                 'b00: alufunc = EQL;
-                'b01: begin end
+                'b01: alufunc = NOTALU;
                 'b10: alufunc = SLT;
                 'b11: alufunc = SLTU;
             endcase 
@@ -157,7 +159,7 @@ module decoder
             alufunc = ADD;
         end
 
-        default: op = ALUI;
+        default: begin op = ALUI; alufunc = NOTALU; regwrite = 0; end
     endcase
 endmodule
 

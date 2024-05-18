@@ -16,6 +16,11 @@ module fetch
     input  [63:0]       jump
 );
     reg [63:0] pc;
+    logic pc_stop = (~iresp.data_ok) | stop;
+    wire[63:0] pc_next = reset      ? 64'h80000000 :
+                         branch     ? jump         :
+                         pc_stop    ? pc           :
+                                      pc + 4;
 
     assign ireq.addr = pc;
     always_ff @(posedge clk) begin
@@ -23,11 +28,8 @@ module fetch
         ireq.valid = pc == pc_next;
     end
 
-    logic pc_stop = (~iresp.data_ok) | stop;
-    wire[63:0] pc_next = reset      ? 64'h80000000 :
-                         branch     ? jump         :
-                         pc_stop    ? pc           :
-                                      pc + 4;
+    
+
 
     always_ff @(posedge clk)
         if (!stop) begin

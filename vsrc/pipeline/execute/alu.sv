@@ -13,7 +13,7 @@ module alu
 	input           clk,
 	input [63:0]    a, b,
 	input alufunc_t alufunc,
-	output [63:0]   result,
+	output logic [63:0]   result,
 	input           choose,
 	input           valid,
 	output logic    bubble
@@ -40,7 +40,7 @@ module alu
 			REM:  c = (b == 0 ? a : rem);
 			DIVU: c = (b == 0 ? -1 : quotu);
 			REMU: c = (b == 0 ? a : remu);
-			default: begin end
+			default: begin c = 0; end
 		endcase
 		if (choose) begin
 			unique case (alufunc)

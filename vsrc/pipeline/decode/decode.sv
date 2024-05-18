@@ -20,15 +20,20 @@ module decode
     input  tran_t        trane, tranm
 );
     control_t ctl;
+    decode_op_t op;
+    alufunc_t alufunc;
+    logic regwrite;
     word_t temp1, temp2;
     logic bubble, bubble1, bubble2;
 
     decoder decoder(
         .instr(dataF.instr),
-        .op(ctl.op),
-        .alufunc(ctl.alufunc),
-        .regwrite(ctl.regwrite)
+        .op(op),
+        .alufunc(alufunc),
+        .regwrite(regwrite)
     );
+
+    assign ctl = '{op, alufunc, regwrite};
 
     assign rs2 = dataF.instr[24:20];
     assign rs1 = dataF.instr[19:15];
