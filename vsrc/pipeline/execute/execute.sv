@@ -32,7 +32,7 @@ module execute
         .choose(ctl.op == ALUW || ctl.op == ALUIW),
         .bubble, .valid(dataD.valid)
     );
-    assign branch = ctl.op == JAL || ctl.op == JALR || ctl.op == BZ || ctl.op == BNZ; // && dataD.valid;
+    assign branch = (ctl.op == JAL || ctl.op == JALR || ctl.op == BZ || ctl.op == BNZ) && dataD.valid;
     always_comb 
     if(ctl.op == JAL) jump = dataD.pc + {{43{instr[31]}}, instr[31], instr[19:12] , instr[20] , instr[30:21], 1'b0};
     else if(ctl.op == JALR) jump = dataD.rd1 + {{52{instr[31]}}, instr[31:20]};
@@ -40,8 +40,17 @@ module execute
     else jump = dataD.pc + {{51{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
 
     assign stope = bubble & dataD.valid;
-    always_ff @(posedge clk) begin
-        if (!stopm) begin
+    always_ff @(posedge clk)
+        if (reset) begin
+            dataE.valid  <= 0;
+            dataE.pc     <= 0;
+            dataE.instr  <= 0;
+            dataE.ctl    <= 0;
+            dataE.dst    <= 0;
+            dataE.rd2    <= 0;
+            dataE.result <= 0;
+        end
+        else if (!stopm) begin
             dataE.valid  <= !bubble && dataD.valid;
             dataE.pc     <= dataD.pc;
             dataE.instr  <= dataD.instr;
@@ -50,7 +59,16 @@ module execute
             dataE.rd2    <= dataD.rd2;
             dataE.result <= alu_result;
         end
-    end
+        else begin
+            dataE.valid  <= 0;
+            dataE.pc     <= 0;
+            dataE.instr  <= 0;
+            dataE.ctl    <= 0;
+            dataE.dst    <= 0;
+            dataE.rd2    <= 0;
+            dataE.result <= 0;
+        end
+
 endmodule
 
 `endif

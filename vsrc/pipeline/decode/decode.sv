@@ -61,9 +61,21 @@ module decode
         .bubble2
     );
 
-    assign stopd = bubble;
+    assign stopd = bubble && dataF.valid;
 
     always_ff @(posedge clk)
+        if (reset) begin
+            dataD.valid <= 0;
+            dataD.pc    <= 0;
+            dataD.instr <= 0;
+            dataD.ctl   <= 0;
+            dataD.dst   <= 0;
+            dataD.srca  <= 0;
+            dataD.srcb  <= 0;
+            dataD.rd1   <= 0;
+            dataD.rd2   <= 0;
+        end
+        else
         if (!stope & !stopm) begin 
             dataD.valid <= ~(branch | bubble) & dataF.valid;
             dataD.pc    <= dataF.pc;

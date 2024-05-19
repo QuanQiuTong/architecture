@@ -16,7 +16,7 @@ module fetch
     input  [63:0]       jump
 );
     reg [63:0] pc;
-    logic pc_stop = (~iresp.data_ok) | stop;
+    wire pc_stop = (~iresp.data_ok) | stop;
     wire[63:0] pc_next = reset      ? 64'h80000000 :
                          branch     ? jump         :
                          pc_stop    ? pc           :
@@ -32,7 +32,12 @@ module fetch
 
 
     always_ff @(posedge clk)
-        if (!stop) begin
+        if (reset) begin
+            dataF.valid <= 0;
+            dataF.instr <= 0;
+            dataF.pc <= 0;
+        end
+        else if (!stop) begin
             dataF.valid <= iresp.data_ok & ~branch;
             dataF.instr <= iresp.data;
             dataF.pc <= pc;

@@ -12,7 +12,41 @@ module regfile (
 	assign q1 = regs[rs1];
 	assign q2 = regs[rs2];
 
-	always_ff @(posedge clk) begin
+	always_ff @(posedge clk)
+	if (reset) begin
+		regs[0] <= 64'b0;
+		regs[1] <= 64'b0;
+		regs[2] <= 64'b0;
+		regs[3] <= 64'b0;
+		regs[4] <= 64'b0;
+		regs[5] <= 64'b0;
+		regs[6] <= 64'b0;
+		regs[7] <= 64'b0;
+		regs[8] <= 64'b0;
+		regs[9] <= 64'b0;
+		regs[10] <= 64'b0;
+		regs[11] <= 64'b0;
+		regs[12] <= 64'b0;
+		regs[13] <= 64'b0;
+		regs[14] <= 64'b0;
+		regs[15] <= 64'b0;
+		regs[16] <= 64'b0;
+		regs[17] <= 64'b0;
+		regs[18] <= 64'b0;
+		regs[19] <= 64'b0;
+		regs[20] <= 64'b0;
+		regs[21] <= 64'b0;
+		regs[22] <= 64'b0;
+		regs[23] <= 64'b0;
+		regs[24] <= 64'b0;
+		regs[25] <= 64'b0;
+		regs[26] <= 64'b0;
+		regs[27] <= 64'b0;
+		regs[28] <= 64'b0;
+		regs[29] <= 64'b0;
+		regs[30] <= 64'b0;
+		regs[31] <= 64'b0;
+	end else begin
 		regs <= regs_nxt;
 		regs[0] <= '0;
 	end

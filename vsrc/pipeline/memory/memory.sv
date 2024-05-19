@@ -47,7 +47,26 @@ module memory
 
     assign stopm = (load | store) & !dresp.data_ok & dataE.valid;
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk) 
+    if (reset) begin
+        dataM.pc     <= 0;
+        dataM.valid  <= 0;
+        dataM.instr  <= 0;
+        dataM.ctl    <= 0;
+        dataM.dst    <= 0;
+        dataM.result <= 0;
+        dataM.addr   <= 0;
+    end
+    else if (!stopm) begin
+        dataM.pc     <= dataE.pc;
+        dataM.valid  <= dataE.valid;
+        dataM.instr  <= dataE.instr;
+        dataM.ctl    <= dataE.ctl;
+        dataM.dst    <= dataE.dst;
+        dataM.result <= (load | store) ? out : dataE.result;
+        dataM.addr   <= dataE.result;
+    end
+    else begin
         dataM.pc     <= dataE.pc;
         dataM.valid  <= !stopm & dataE.valid; // (!(load | store) | dresp.data_ok) & dataE.valid;
         dataM.instr  <= dataE.instr;
