@@ -19,7 +19,8 @@ module execute
     output logic         stope
 );
     logic bubble;
-    control_t ctl = dataD.ctl;
+    control_t ctl;
+    assign ctl = dataD.ctl;
     word_t rd2, rd1;
     u32 instr = dataD.instr;
     word_t alu_result;
@@ -60,6 +61,7 @@ module execute
             dataE.rd2    <= dataD.rd2;
             dataE.result <= alu_result;
         end
+        // 'else' causes verilator fails
 
 endmodule
 
