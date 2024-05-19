@@ -50,7 +50,8 @@ module execute
             dataE.rd2    <= 0;
             dataE.result <= 0;
         end
-        else if (!stopm) begin
+        else
+        if (!stopm) begin
             dataE.valid  <= !bubble && dataD.valid;
             dataE.pc     <= dataD.pc;
             dataE.instr  <= dataD.instr;
@@ -58,15 +59,6 @@ module execute
             dataE.dst    <= dataD.dst;
             dataE.rd2    <= dataD.rd2;
             dataE.result <= alu_result;
-        end
-        else begin
-            dataE.valid  <= 0;
-            dataE.pc     <= 0;
-            dataE.instr  <= 0;
-            dataE.ctl    <= 0;
-            dataE.dst    <= 0;
-            dataE.rd2    <= 0;
-            dataE.result <= 0;
         end
 
 endmodule

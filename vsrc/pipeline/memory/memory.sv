@@ -57,16 +57,8 @@ module memory
         dataM.result <= 0;
         dataM.addr   <= 0;
     end
-    else if (!stopm) begin
-        dataM.pc     <= dataE.pc;
-        dataM.valid  <= dataE.valid;
-        dataM.instr  <= dataE.instr;
-        dataM.ctl    <= dataE.ctl;
-        dataM.dst    <= dataE.dst;
-        dataM.result <= (load | store) ? out : dataE.result;
-        dataM.addr   <= dataE.result;
-    end
-    else begin
+    else
+    begin
         dataM.pc     <= dataE.pc;
         dataM.valid  <= !stopm & dataE.valid; // (!(load | store) | dresp.data_ok) & dataE.valid;
         dataM.instr  <= dataE.instr;
