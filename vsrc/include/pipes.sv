@@ -24,6 +24,7 @@ typedef struct packed {
 	logic valid;
 	u32 instr;
 	u64 pc;
+	error_t error;
 } fetch_data_t;
 typedef struct packed {
 	logic valid;
@@ -33,6 +34,9 @@ typedef struct packed {
 	creg_addr_t dst;
 	word_t srca, srcb;	
 	word_t rd2,rd1;
+	logic[11:0] csrdst;
+	word_t csr;
+	error_t error;
 } decode_data_t;
 typedef struct packed {
 	u64 pc;
@@ -42,6 +46,9 @@ typedef struct packed {
 	creg_addr_t dst;
 	word_t rd2;
 	word_t result;
+	logic[11:0] csrdst;
+	word_t csr;
+	error_t error;
 } excute_data_t;
 typedef struct packed {
 	u64 pc;
@@ -51,6 +58,9 @@ typedef struct packed {
 	creg_addr_t dst;
 	word_t result;
 	word_t addr;
+	logic[11:0] csrdst;
+	word_t csr;
+	error_t error;
 } memory_data_t;
 endpackage
 

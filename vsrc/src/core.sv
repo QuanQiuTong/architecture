@@ -22,16 +22,22 @@ module core
 	excute_data_t dataE;
 	memory_data_t dataM;
 	wire[4:0]  rs1, rs2;
-	wire[63:0] q1, q2;
-	logic stopd,stope,stopm,branch;
+	wire[11:0] csrs;     // CSR source
+	wire[63:0] q1, q2, qcsr;
+	logic stopf, stopd, stope, stopm, branch;
 	wire[63:0] jump;
 	tran_t trane,tranm;
+	logic flushde, flushall;
+	logic[63:0] csrpc;
 
 	fetch fetch(
-		.clk, .reset,
+		.clk, .reset, 
 		.ireq, .iresp,
 		.branch, .jump,
 		.stop(stopd | stope | stopm),
+		.flushall,
+		.csrpc,
+		.stopf,
 		.dataF
 	);
 	decode decode(
@@ -40,7 +46,8 @@ module core
 		.rs1, .rs2, .q1, .q2,
 		.branch,
 		.stopd, .stope, .stopm,
-		.trane, .tranm
+		.trane, .tranm,
+		.csrs, .qcsr
 	);
 	execute execute(
 		.clk, .reset,
@@ -59,6 +66,15 @@ module core
 		.rs1, .rs2, .rd(dataM.dst),
 		.in(dataM.result),
 		.q1, .q2
+	);
+	csr csr(
+		.clk, .reset,
+		.ra(csrs), .rd(qcsr),
+		.csrpc,
+		.dataM,
+		.trint, .swint, .exint,
+		.stopm, .stopf,
+		.flushde, .flushall
 	);
 	assign tranm = '{1, (dataM.ctl.regwrite && dataM.valid ? dataM.dst : 0), dataM.result};
 	assign trane.dst = (dataE.ctl.regwrite && dataE.valid) ? dataE.dst : 0;

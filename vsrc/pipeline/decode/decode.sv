@@ -12,12 +12,14 @@ module decode
     import common::*;
     import pipes::*;(
     input                clk, reset, stope, stopm, branch,
-    output logic         stopd,
+    input  tran_t        trane, tranm,
     input  fetch_data_t  dataF,
+    output logic         stopd,
     output decode_data_t dataD,
-    input  word_t        q1, q2,
+
+    input  word_t        q1, q2, qcsr,
     output [4:0]         rs1, rs2,
-    input  tran_t        trane, tranm
+    output [11:0]        csrs
 );
     control_t ctl;
     decode_op_t op;

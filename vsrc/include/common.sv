@@ -270,13 +270,21 @@ typedef struct packed {
     //             REMUW = 5'b11011;
 
 typedef enum logic[5:0] {
-	NOP,ALUI,ALU,ALUW,ALUIW,LUI,JAL,BEQ,LD,SD,AUIPC,JALR,BZ,BNZ
+	NOP,
+    ALUI, ALU, ALUW, ALUIW,
+    LUI, JAL, BEQ, LD, SD, AUIPC, JALR, BZ, BNZ,
+    CSR, CSRI, ECALL, MRET
 } decode_op_t;
 
 typedef enum logic [4:0] {
 	NOTALU,ADD,XOR,OR,AND,SUB,CPYB,EQL,SLT,
-	SLTU,SLL,SRL,SRA,MULT,DIV,REM,DIVU,REMU
+    SLTU,SLL,SRL,SRA,MULT,DIV,REM,DIVU,
+    REMU, ALU_CSRC, ALU_CSRW, ALU_CSRS, ALU_ECALL, ALU_MRET
 } alufunc_t;
+
+typedef enum logic [2:0] {
+	NOERROR, EFETCH, EDECODE, ELOAD, ESTORE
+} error_t;
 
 endpackage
 `endif

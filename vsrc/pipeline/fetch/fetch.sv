@@ -9,17 +9,20 @@
 module fetch
     import common::*;
     import pipes::*;(
-    input               clk, reset, branch, stop,
+    input               clk, reset, branch, stop, flushall,
     output fetch_data_t dataF,
     output ibus_req_t   ireq,
     input  ibus_resp_t  iresp,
-    input  [63:0]       jump
+    input  [63:0]       jump, csrpc,
+    output              stopf
 );
     reg [63:0] pc;
-    wire pc_stop = (~iresp.data_ok) | stop;
+    
+    assign stopf = (~iresp.data_ok) | stop;
     wire[63:0] pc_next = reset      ? 64'h80000000 :
+                         flushall   ? csrpc        :
                          branch     ? jump         :
-                         pc_stop    ? pc           :
+                         stopf      ? pc           :
                                       pc + 4;
 
     assign ireq.addr = pc;
@@ -28,16 +31,16 @@ module fetch
         ireq.valid = pc == pc_next;
     end
 
-    
-
-
     always_ff @(posedge clk)
         if (reset) begin
             dataF.valid <= 0;
             dataF.instr <= 0;
             dataF.pc <= 0;
-        end
-        else if (!stop) begin
+        end else if (flushall) begin
+            dataF.valid <= 0;
+            dataF.instr <= 0;
+            dataF.pc <= 0;
+        end else if (!stop) begin
             dataF.valid <= iresp.data_ok & ~branch;
             dataF.instr <= iresp.data;
             dataF.pc <= pc;
