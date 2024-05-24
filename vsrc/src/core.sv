@@ -47,7 +47,7 @@ module core
 		.branch,
 		.stopd, .stope, .stopm,
 		.trane, .tranm,
-		.csrs, .qcsr
+		.csrs, .qcsr, .flushde
 	);
 	execute execute(
 		.clk, .reset,
@@ -147,24 +147,24 @@ module core
 	DifftestCSRState DifftestCSRState(
 		.clock              (clk),
 		.coreid             (0),
-		.priviledgeMode     (3),
-		.mstatus            (0),
-		.sstatus            (0),
-		.mepc               (0),
+		.priviledgeMode     (csr.mode_nxt),
+		.mstatus            (csr.regs_nxt.mstatus),
+		.sstatus            (csr.regs_nxt.mstatus & 64'h800000030001e000),
+		.mepc               (csr.regs_nxt.mepc),
 		.sepc               (0),
-		.mtval              (0),
+		.mtval              (csr.regs_nxt.mtval),
 		.stval              (0),
-		.mtvec              (0),
+		.mtvec              (csr.regs_nxt.mtvec),
 		.stvec              (0),
-		.mcause             (0),
+		.mcause             (csr.regs_nxt.mcause),
 		.scause             (0),
 		.satp               (0),
-		.mip                (0),
-		.mie                (0),
-		.mscratch           (0),
+		.mip                (csr.regs_nxt.mip),
+		.mie                (csr.regs_nxt.mie),
+		.mscratch           (csr.regs_nxt.mscratch),
 		.sscratch           (0),
 		.mideleg            (0),
 		.medeleg            (0)
-	      );
+	);
 `endif
 endmodule

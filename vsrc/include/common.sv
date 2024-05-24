@@ -270,7 +270,7 @@ typedef struct packed {
     //             REMUW = 5'b11011;
 
 typedef enum logic[5:0] {
-	NOP,
+	UNKNOWN, NOP,
     ALUI, ALU, ALUW, ALUIW,
     LUI, JAL, BEQ, LD, SD, AUIPC, JALR, BZ, BNZ,
     CSR, CSRI, ECALL, MRET

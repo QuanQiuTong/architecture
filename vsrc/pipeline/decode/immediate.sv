@@ -9,13 +9,14 @@
 module immediate
 	import common::*;
 	import pipes::*;(
-    input word_t    scrb, scra,
-    input u64       pc,
-    input control_t ctl,
-    input u32       instr,
-    output word_t   rd2, rd1,
-    output u1       bubble,
-    input logic     bubble1, bubble2
+    input  word_t    scrb, scra,
+    input  u64       pc,
+    input  control_t ctl,
+    input  u32       instr,
+    input  logic     bubble1, bubble2,
+    input  word_t    qcsr,
+    output word_t    rd2, rd1,
+    output u1        bubble
 );
     always_comb begin
         rd1 = scra;
@@ -56,6 +57,16 @@ module immediate
             JAL, JALR: begin
                 rd1 = pc;
                 rd2 = 4;
+                bubble = 0;
+            end
+            CSR: begin
+                rd2 = scra;
+                rd1 = qcsr;
+                bubble = bubble1;
+            end
+            CSRI: begin
+                rd2 = {52'b0, instr[31:20]};
+                rd1 = qcsr;
                 bubble = 0;
             end
             default: bubble = bubble1 | bubble2;

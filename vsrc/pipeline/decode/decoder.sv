@@ -159,6 +159,50 @@ module decoder
             alufunc = ADD;
         end
 
+        7'b1110011: begin
+            regwrite = 1;
+            unique case (funct3) 
+                    'b011:begin // CSRRC
+                        op=CSR;
+                        alufunc=ALU_CSRC;
+                    end
+                    'b111:begin // CSRRCI
+                        op=CSRI;
+                        alufunc=ALU_CSRC;
+                    end
+                    'b010:begin // CSRRS
+                        op=CSR;
+                        alufunc=ALU_CSRS;
+                    end
+                    'b110:begin // CSRRSI
+                        op=CSRI;
+                        alufunc=ALU_CSRS;
+                    end
+                    'b001:begin // CSRRW
+                        op=CSR;
+                        alufunc=ALU_CSRW;
+                    end
+                    'b101:begin // CSRRWI
+                        op=CSRI;
+                        alufunc=ALU_CSRW;
+                    end
+                    'b000:begin // ECALL
+                        regwrite=0;
+                        if (funct7==7'b0000000) begin
+                            op=ECALL;
+                            alufunc=ALU_ECALL;
+                        end
+                        else begin
+                            op=MRET;
+                            alufunc=ALU_MRET;
+                        end
+                    end
+                    default: begin
+                        
+                    end
+                endcase
+        end
+
         default: begin op = ALUI; alufunc = NOTALU; regwrite = 0; end
     endcase
 endmodule

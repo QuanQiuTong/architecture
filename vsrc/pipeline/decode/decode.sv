@@ -11,7 +11,7 @@
 module decode
     import common::*;
     import pipes::*;(
-    input                clk, reset, stope, stopm, branch,
+    input                clk, reset, stope, stopm, branch, flushde,
     input  tran_t        trane, tranm,
     input  fetch_data_t  dataF,
     output logic         stopd,
@@ -55,6 +55,7 @@ module decode
         .scrb(temp2),
         .pc(dataF.pc),
         .ctl(ctl),
+        .qcsr,
         .instr(dataF.instr),
         .rd1,
         .rd2,
@@ -63,22 +64,17 @@ module decode
         .bubble2
     );
 
-    assign stopd = bubble && dataF.valid;
+    assign stopd = bubble && dataF.valid && dataF.error == NOERROR;
+
+    assign csrs = dataF.instr[31:20];
+
 
     always_ff @(posedge clk)
         if (reset) begin
             dataD.valid <= 0;
-            dataD.pc    <= 0;
-            dataD.instr <= 0;
-            dataD.ctl   <= 0;
-            dataD.dst   <= 0;
-            dataD.srca  <= 0;
-            dataD.srcb  <= 0;
-            dataD.rd1   <= 0;
-            dataD.rd2   <= 0;
-        end
-        else
-        if (!stope & !stopm) begin 
+        end else if (flushde) begin
+            dataD.valid <= 0;
+        end else if (!stope & !stopm) begin 
             dataD.valid <= ~(branch | bubble) & dataF.valid;
             dataD.pc    <= dataF.pc;
             dataD.instr <= dataF.instr;
@@ -88,6 +84,10 @@ module decode
             dataD.srcb  <= rd2;
             dataD.rd1   <= temp1;
             dataD.rd2   <= temp2;
+            dataD.csrdst <= csrs;
+            dataD.csr  <= rd2;
+            dataD.error <= dataF.error != NOERROR ? dataF.error :
+                           ctl.op == UNKNOWN ? EDECODE : NOERROR;
         end
 endmodule
 
