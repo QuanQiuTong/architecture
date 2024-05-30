@@ -11,8 +11,8 @@ module decoder
 	output alufunc_t   alufunc,
 	output logic       regwrite
 );
-    wire [2:0] funct3 =  instr[14:12];
-    wire [6:0] funct7 =  instr[31:25];
+    wire [2:0] funct3 = instr[14:12];
+    wire [6:0] funct7 = instr[31:25];
 
     always_comb unique case(instr[6:0])
         7'b0010011: begin

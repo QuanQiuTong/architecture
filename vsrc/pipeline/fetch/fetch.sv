@@ -36,14 +36,13 @@ module fetch
             dataF.valid <= 0;
             dataF.instr <= 0;
             dataF.pc <= 0;
-        end else if (flushall) begin
+        end else if (flushall || ~iresp.data_ok) begin
             dataF.valid <= 0;
-            dataF.instr <= 0;
-            dataF.pc <= 0;
         end else if (!stop) begin
-            dataF.valid <= iresp.data_ok & ~branch;
+            dataF.valid <= ~branch;
             dataF.instr <= iresp.data;
             dataF.pc <= pc;
+            dataF.error <= pc[1:0] == 'b00 ? NOERROR : EFETCH;
         end
 endmodule
 

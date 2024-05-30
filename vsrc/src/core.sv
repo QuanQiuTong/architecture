@@ -61,7 +61,8 @@ module core
 		.dataE, .dataM,
 		.dreq, .dresp,
 		.stopm,
-		.flushde, .flushall
+		.flushde, .flushall,
+		.satp(csr.regs.satp)
 	);
 	regfile regfile(
 		.clk, .reset,
