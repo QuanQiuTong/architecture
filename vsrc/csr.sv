@@ -18,9 +18,9 @@ module csr
 	output u64 rd,
 	output u64 csrpc,
 	input memory_data_t dataM,
-	input logic trint, swint,exint,
-	input logic stopm,stopf,
-	output logic flushde,flushall
+	input logic trint, swint, exint,
+	input logic stopm, stopf,
+	output logic flushde, flushall
 );
 	csr_regs_t regs, regs_nxt;
 	u2 mode, mode_nxt;
@@ -32,13 +32,13 @@ module csr
 	assign interupt=dataM.valid&&regs.mstatus.mie &&((trint && regs.mie[7]) || (swint && regs.mie[3]) || (exint && regs.mie[11]));
 	always_ff @(posedge clk) begin
 		if (reset) begin
-			regs <= '0;
+			regs           <= '0;
 			regs.mcause[1] <= 1'b1;
-			regs.mepc[31] <= 1'b1;
-			mode<=2'd3;
+			regs.mepc[31]  <= 1'b1;
+			mode           <= 2'd3;
 		end else begin
-			regs <= regs_nxt;
-			mode<=mode_nxt;
+			regs           <= regs_nxt;
+			mode           <= mode_nxt;
 		end
 	end
 
@@ -146,7 +146,8 @@ module csr
 		end
 		else if (~stopm&&(dataM.ctl.op==MRET)&&dataM.valid) begin
 			flushde=1;
-			if (~stopf) begin
+			// if (~stopf) 
+			begin
 				flushall=1;
 				csrpc=regs_nxt.mepc;
 				regs_nxt.mstatus.mie = regs_nxt.mstatus.mpie;

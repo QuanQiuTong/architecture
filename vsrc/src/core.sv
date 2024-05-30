@@ -64,7 +64,8 @@ module core
 		.flushde, .flushall
 	);
 	regfile regfile(
-		.clk, .reset, .we(dataM.ctl.regwrite&&dataM.valid),
+		.clk, .reset,
+		.we(dataM.ctl.regwrite && dataM.valid),
 		.rs1, .rs2, .rd(dataM.dst),
 		.in(dataM.result),
 		.q1, .q2

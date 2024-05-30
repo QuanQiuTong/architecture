@@ -191,11 +191,13 @@ module decoder
                         if (funct7==7'b0000000) begin
                             op=ECALL;
                             alufunc=ALU_ECALL;
-                        end
-                        else begin
+                        end else if (funct7=='b0011000) begin
                             op=MRET;
                             alufunc=ALU_MRET;
-                        end
+                        end else begin
+                            op=UNKNOWN;
+                            alufunc=NOTALU;
+                        end                        
                     end
                     default: begin
                         

@@ -40,6 +40,7 @@ module alu
 			REM:  c = (b == 0 ? a : rem);
 			DIVU: c = (b == 0 ? -1 : quotu);
 			REMU: c = (b == 0 ? a : remu);
+			ALU_CSRW: c = a;
 			default: begin c = 0; end
 		endcase
 		if (choose) begin
