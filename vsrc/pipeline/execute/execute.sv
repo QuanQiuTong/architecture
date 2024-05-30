@@ -10,7 +10,7 @@
 module execute
     import common::*;
 	import pipes::*;(
-    input  logic         clk, reset,
+    input           clk, reset, flushde,
     input  decode_data_t dataD,
     output excute_data_t dataE,
     output logic         branch,
@@ -42,17 +42,9 @@ module execute
 
     assign stope = bubble & dataD.valid;
     always_ff @(posedge clk)
-        if (reset) begin
+        if (reset || flushde)
             dataE.valid  <= 0;
-            dataE.pc     <= 0;
-            dataE.instr  <= 0;
-            dataE.ctl    <= 0;
-            dataE.dst    <= 0;
-            dataE.rd2    <= 0;
-            dataE.result <= 0;
-        end
-        else
-        if (!stopm) begin
+        else if (!stopm) begin
             dataE.valid  <= !bubble && dataD.valid;
             dataE.pc     <= dataD.pc;
             dataE.instr  <= dataD.instr;
@@ -60,6 +52,9 @@ module execute
             dataE.dst    <= dataD.dst;
             dataE.rd2    <= dataD.rd2;
             dataE.result <= alu_result;
+            dataE.csr    <= dataD.csr;
+            dataE.csrdst <= dataD.csrdst;
+            dataE.error  <= dataD.error;
         end
         // 'else' causes verilator fails
 

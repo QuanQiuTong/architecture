@@ -9,7 +9,7 @@
 module memory
     import common::*;
     import pipes::*;(
-    input           clk, reset,
+    input    clk, reset, flushde, flushall,
     input  excute_data_t dataE,
     output memory_data_t dataM,
     output dbus_req_t    dreq,
@@ -48,17 +48,9 @@ module memory
     assign stopm = (load | store) & !dresp.data_ok & dataE.valid;
 
     always_ff @(posedge clk) 
-    if (reset) begin
-        dataM.pc     <= 0;
+    if (reset || flushall)
         dataM.valid  <= 0;
-        dataM.instr  <= 0;
-        dataM.ctl    <= 0;
-        dataM.dst    <= 0;
-        dataM.result <= 0;
-        dataM.addr   <= 0;
-    end
-    else
-    begin
+    else if(!flushde)begin
         dataM.pc     <= dataE.pc;
         dataM.valid  <= !stopm & dataE.valid; // (!(load | store) | dresp.data_ok) & dataE.valid;
         dataM.instr  <= dataE.instr;
@@ -66,6 +58,9 @@ module memory
         dataM.dst    <= dataE.dst;
         dataM.result <= (load | store) ? out : dataE.result;
         dataM.addr   <= dataE.result;
+        dataM.csrdst <= dataE.csrdst;
+        dataM.csr    <= dataE.csr;
+        dataM.error  <= dataE.error;
     end
 endmodule
 

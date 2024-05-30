@@ -119,7 +119,8 @@ module csr
 		end
 		else if (~stopm&&(dataM.ctl.op==CSR||dataM.ctl.op==CSRI)&&dataM.valid) begin
 			flushde=1;
-			if (~stopf) begin
+			// if (~stopf) 
+			begin
 				flushall=1;
 				csrpc=dataM.pc+4;
 				unique case(dataM.ctl.alufunc) 
@@ -138,6 +139,7 @@ module csr
 					CSR_MCAUSE: regs_nxt.mcause = csrresult;
 					CSR_MCYCLE: regs_nxt.mcycle = csrresult;
 					CSR_MTVAL: regs_nxt.mtval = csrresult;
+					CSR_SATP: regs_nxt.satp = csrresult;
 					default: begin end
 				endcase
 			end

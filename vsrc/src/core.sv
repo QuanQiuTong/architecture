@@ -53,13 +53,15 @@ module core
 		.clk, .reset,
 		.dataD, .dataE,
 		.branch, .jump,
-		.stope, .stopm
+		.stope, .stopm,
+		.flushde
 	);
 	memory memory(
 		.clk, .reset,
 		.dataE, .dataM,
 		.dreq, .dresp,
-		.stopm
+		.stopm,
+		.flushde, .flushall
 	);
 	regfile regfile(
 		.clk, .reset, .we(dataM.ctl.regwrite&&dataM.valid),
@@ -158,7 +160,7 @@ module core
 		.stvec              (0),
 		.mcause             (csr.regs_nxt.mcause),
 		.scause             (0),
-		.satp               (0),
+		.satp               (csr.regs_nxt.satp),
 		.mip                (csr.regs_nxt.mip),
 		.mie                (csr.regs_nxt.mie),
 		.mscratch           (csr.regs_nxt.mscratch),

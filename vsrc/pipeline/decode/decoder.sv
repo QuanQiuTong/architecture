@@ -203,7 +203,7 @@ module decoder
                 endcase
         end
 
-        default: begin op = ALUI; alufunc = NOTALU; regwrite = 0; end
+        default: begin op = UNKNOWN; alufunc = NOTALU; regwrite = 0; end
     endcase
 endmodule
 
