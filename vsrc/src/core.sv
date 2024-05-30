@@ -80,7 +80,11 @@ module core
 		.stopm, .stopf,
 		.flushde, .flushall
 	);
-	assign tranm = '{1, (dataM.ctl.regwrite && dataM.valid ? dataM.dst : 0), dataM.result};
+	// if not deal with "page fault", outcome:
+	// a5 different at pc = 0x00800019bc, right= 0x000000008000f000, wrong = 0x0000000000000000
+    // info:
+	// 800019bc:	0204b783          	ld	a5,32(s1)
+	assign tranm = '{1, (dataM.ctl.regwrite && dataM.valid && dataM.error == NOERROR ? dataM.dst : 0), dataM.result};
 	assign trane.dst = (dataE.ctl.regwrite && dataE.valid) ? dataE.dst : 0;
 	assign trane.data = dataE.result;
 	assign trane.ismem = (dataE.ctl.op == SD || dataE.ctl.op == LD);
@@ -90,7 +94,7 @@ module core
 		.clock              (clk),
 		.coreid             (0),
 		.index              (0),
-		.valid              (~reset&dataM.valid),
+		.valid              (~reset && dataM.valid && dataM.error == NOERROR),
 		.pc                 (dataM.pc),
 		.instr              (dataM.instr),
 		.skip               ((dataM.ctl.op == SD || dataM.ctl.op == LD) && dataM.addr[31] == 0),

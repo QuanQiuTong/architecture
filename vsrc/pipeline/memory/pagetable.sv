@@ -7,8 +7,7 @@
 `endif
 
 module pagetable (
-    input logic clk,
-    input logic reset,
+    input clk, reset, en, 
     input logic [63:0] va,           // 虚拟地址
     input logic [63:0] satp,         // satp寄存器值
     output logic [63:0] pa,          // 翻译后的物理地址
@@ -62,9 +61,10 @@ module pagetable (
                     done = 1;
                 end else if (mode == 8 || mode == 9) begin
                     // Sv39 or Sv48
-                    next_ppn = ppn; // Zero-extend ppn to 64 bits
+                    next_ppn = ppn;
                     level = (mode == 8) ? 2 : 3;
-                    next_state = READ_PTE;
+                    next_state = en ? READ_PTE : IDLE;
+                    done = en ? 0 : 1;
                 end
             end
 

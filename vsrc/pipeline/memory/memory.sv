@@ -22,6 +22,7 @@ module memory
     wire[63:0] addr, mem_addr;
     pagetable pte(
         .clk, .reset,
+        .en((load | store) & dataE.valid),
         .va(dataE.result),
         .satp,
         .pa(addr),
@@ -67,14 +68,15 @@ module memory
 		'b111: begin out = 0; end				   // not used
 		endcase
 
-    assign stopm = !done | ((load | store) & !dresp.data_ok & dataE.valid);
+    // if done but not valid (page fault), don't stop
+    assign stopm = ~done | (valid & ((load | store) & !dresp.data_ok & dataE.valid));
 
     always_ff @(posedge clk) 
     if (reset || flushall)
         dataM.valid  <= 0;
-    else if(!flushde)begin
+    else if(!flushde) begin
         dataM.pc     <= dataE.pc;
-        dataM.valid  <= !stopm & dataE.valid; // (!(load | store) | dresp.data_ok) & dataE.valid;
+        dataM.valid  <= (!stopm & dataE.valid); // (!(load | store) | dresp.data_ok) & dataE.valid;
         dataM.instr  <= dataE.instr;
         dataM.ctl    <= dataE.ctl;
         dataM.dst    <= dataE.dst;
@@ -82,7 +84,8 @@ module memory
         dataM.addr   <= dataE.result;
         dataM.csrdst <= dataE.csrdst;
         dataM.csr    <= dataE.csr;
-        dataM.error  <= dataE.error;
+        dataM.error  <= dataE.error != NOERROR ? dataE.error :
+                        done & ~valid ? PAGE_FAULT : NOERROR;
     end
 endmodule
 
