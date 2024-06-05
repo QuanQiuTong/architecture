@@ -36,6 +36,7 @@ module core
 		.branch, .jump,
 		.stop(stopd | stope | stopm),
 		.flushall,
+		.mret(decode.op == MRET),
 		.csrpc,
 		.stopf,
 		.dataF
@@ -62,7 +63,8 @@ module core
 		.dreq, .dresp,
 		.stopm,
 		.flushde, .flushall,
-		.satp(csr.regs.satp)
+		.satp(csr.regs.satp),
+		.mode(csr.mode)
 	);
 	regfile regfile(
 		.clk, .reset,

@@ -10,6 +10,7 @@ module pagetable (
     input clk, reset, en, 
     input logic [63:0] va,           // 虚拟地址
     input logic [63:0] satp,         // satp寄存器值
+    input [1:0] mmode,                
     output logic [63:0] pa,          // 翻译后的物理地址
     output logic valid,              // 地址翻译是否有效
     output logic [63:0] mem_addr,    // 内存访问地址
@@ -53,7 +54,7 @@ module pagetable (
 
         case (state)
             IDLE: begin
-                if (mode == 0) begin
+                if (mode == 0 || mmode == 'b11) begin
                     // Bare mode, no translation
                     pa = va;
                     valid = 1;

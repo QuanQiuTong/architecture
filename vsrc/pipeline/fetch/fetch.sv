@@ -9,7 +9,7 @@
 module fetch
     import common::*;
     import pipes::*;(
-    input               clk, reset, branch, stop, flushall,
+    input               clk, reset, branch, stop, flushall, mret,
     output fetch_data_t dataF,
     output ibus_req_t   ireq,
     input  ibus_resp_t  iresp,
@@ -28,7 +28,7 @@ module fetch
     assign ireq.addr = pc;
     always_ff @(posedge clk) begin
         pc <= reset ? 64'h80000000 : pc_next;
-        ireq.valid = pc == pc_next;
+        ireq.valid = pc == pc_next && !mret;
     end
 
     always_ff @(posedge clk)

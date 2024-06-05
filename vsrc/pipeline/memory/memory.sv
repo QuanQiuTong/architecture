@@ -16,7 +16,8 @@ module memory
     output dbus_req_t    dreq,
     input  dbus_resp_t   dresp,
     output logic         stopm,
-    input [63:0]         satp
+    input [63:0]         satp,
+    input [1:0] mode
 );
     logic valid, mem_req, done;
     wire[63:0] addr, mem_addr;
@@ -25,6 +26,7 @@ module memory
         .en((load | store) & dataE.valid),
         .va(dataE.result),
         .satp,
+        .mmode(mode),
         .pa(addr),
         .valid,
         .mem_addr,
