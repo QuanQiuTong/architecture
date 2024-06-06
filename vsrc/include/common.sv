@@ -273,7 +273,7 @@ typedef enum logic[5:0] {
 	UNKNOWN, NOP,
     ALUI, ALU, ALUW, ALUIW,
     LUI, JAL, BEQ, LD, SD, AUIPC, JALR, BZ, BNZ,
-    CSR, CSRI, ECALL, MRET
+    CSR, CSRI, ECALL, MRET, SFENCE
 } decode_op_t;
 
 typedef enum logic [4:0] {

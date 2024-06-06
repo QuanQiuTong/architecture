@@ -41,6 +41,7 @@ module alu
 			DIVU: c = (b == 0 ? -1 : quotu);
 			REMU: c = (b == 0 ? a : remu);
 			ALU_CSRW: c = a;
+			ALU_CSRS: c = a;
 			default: begin c = 0; end
 		endcase
 		if (choose) begin

@@ -85,8 +85,8 @@ module decode
             dataD.rd1   <= temp1;
             dataD.rd2   <= temp2;
             dataD.csrdst <= csrs;
-            dataD.csr  <= rd2;
-            dataD.error <= dataF.error != NOERROR ? dataF.error :
+            dataD.csr    <= rd2;
+            dataD.error  <= dataF.error != NOERROR ? dataF.error :
                            ctl.op == UNKNOWN ? EDECODE : NOERROR;
         end
 endmodule

@@ -60,13 +60,13 @@ module immediate
                 bubble = 0;
             end
             CSR: begin
-                rd2 = scra;
                 rd1 = qcsr;
+                rd2 = scra;
                 bubble = bubble1;
             end
             CSRI: begin
-                rd2 = {52'b0, instr[31:20]};
                 rd1 = qcsr;
+                rd2 = {52'b0, instr[31:20]};
                 bubble = 0;
             end
             default: bubble = bubble1 | bubble2;

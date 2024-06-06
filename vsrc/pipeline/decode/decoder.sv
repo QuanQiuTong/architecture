@@ -186,24 +186,27 @@ module decoder
                         op=CSRI;
                         alufunc=ALU_CSRW;
                     end
-                    'b000:begin // ECALL
+                    'b000:begin
                         regwrite=0;
-                        if (funct7==7'b0000000) begin
-                            op=ECALL;
-                            alufunc=ALU_ECALL;
-                        end else if (funct7=='b0011000) begin
-                            op=MRET;
-                            alufunc=ALU_MRET;
+                        if (funct7 == 'b0000000) begin // ECALL
+                            op = ECALL;
+                            alufunc = ALU_ECALL;
+                        end else if (funct7 == 'b0011000) begin
+                            op = MRET;
+                            alufunc = ALU_MRET;
+                        end else if (funct7 == 'b0001001) begin
+                            op = SFENCE;
+                            alufunc = NOTALU;
                         end else begin
-                            op=UNKNOWN;
-                            alufunc=NOTALU;
+                            op = UNKNOWN;
+                            alufunc = NOTALU;
                         end                        
                     end
                     default: begin
                         
                     end
                 endcase
-        end
+        end        
 
         default: begin op = UNKNOWN; alufunc = NOTALU; regwrite = 0; end
     endcase
