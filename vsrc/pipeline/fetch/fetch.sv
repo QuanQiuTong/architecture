@@ -71,7 +71,7 @@ module fetch
             dataF.valid <= ~branch;
             dataF.instr <= iresp.data;
             dataF.pc <= pc;
-            dataF.error <= pc[1:0] == 'b00 ? NOERROR : EFETCH;
+            dataF.error <= pc[1:0] == 'b00 ? NOERROR : INSTR_MISALIGN;
         end
 endmodule
 

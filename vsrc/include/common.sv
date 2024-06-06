@@ -283,7 +283,7 @@ typedef enum logic [4:0] {
 } alufunc_t;
 
 typedef enum logic [2:0] {
-	NOERROR, EFETCH, EDECODE, ELOAD, ESTORE, PAGE_FAULT
+	NOERROR, INSTR_MISALIGN, EDECODE, LOAD_MISALIGN, STORE_MISALIGN, PAGE_FAULT
 } error_t;
 
 endpackage

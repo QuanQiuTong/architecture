@@ -70,6 +70,14 @@ module memory
 		'b111: begin out = 0; end				   // not used
 		endcase
 
+    logic misalign;
+    always_comb case(funct3[1:0])
+        'b00: misalign =                      0; // b
+        'b01: misalign = dataE.result[0]   != 0; // h
+        'b10: misalign = dataE.result[1:0] != 0; // w
+        'b11: misalign = dataE.result[2:0] != 0; // d
+    endcase
+
     // if done but not valid (page fault), don't stop
     assign stopm = ~done | (valid & ((load | store) & !dresp.data_ok & dataE.valid));
 
@@ -87,6 +95,7 @@ module memory
         dataM.csrdst <= dataE.csrdst;
         dataM.csr    <= dataE.csr;
         dataM.error  <= dataE.error != NOERROR ? dataE.error :
+                        // misalign ? (load ? LOAD_MISALIGN : STORE_MISALIGN):
                         done & ~valid ? PAGE_FAULT : NOERROR;
     end
 endmodule
