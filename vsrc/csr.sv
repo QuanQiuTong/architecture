@@ -71,7 +71,8 @@ module csr
 		regs_nxt.mcycle = regs.mcycle + 1;
 		if (~stopm&&error&&dataM.valid) begin
 			flushde=1;
-			if (~stopf) begin
+			// if (~stopf)
+			begin
 				flushall=1;
 				mode_nxt = 2'd3;
 				csrpc=regs_nxt.mtvec;

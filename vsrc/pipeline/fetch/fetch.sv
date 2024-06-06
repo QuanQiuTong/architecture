@@ -9,9 +9,10 @@
 module fetch
     import common::*;
     import pipes::*;(
-    input               clk, reset, branch, stop, flushall, mret,
+    input               clk, reset, branch, stop, flushall,
     input  [63:0]       jump, csrpc, satp,
     input  [1:0]        mode,
+    input  decode_op_t  op,
     input  ibus_resp_t  iresp,
     input  dbus_resp_t  dresp,
     output dbus_req_t   dreq,
@@ -35,9 +36,9 @@ module fetch
 
     logic req, done, valid;
     always_ff @(posedge clk)
-        if(req || !mret) 
+        if(req || (op != MRET && op != ECALL)) 
             req = pc == pc_next;
-        else // !req && mret
+        else // !req && (mret || ecall)
             req = flushall;
     wire [63:0] addr;
 

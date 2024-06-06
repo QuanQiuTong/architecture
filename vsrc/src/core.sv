@@ -45,7 +45,7 @@ module core
 		.branch, .jump,
 		.stop(stopd | stope | stopm),
 		.flushall,
-		.mret(decode.op == MRET),
+		.op(decode.op),
 		.satp(csr.regs.satp),
 		.mode(csr.mode),
 		.csrpc,
