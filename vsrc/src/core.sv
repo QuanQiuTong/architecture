@@ -29,16 +29,25 @@ module core
 	tran_t trane,tranm;
 	logic flushde, flushall;
 	logic[63:0] csrpc;
+	dbus_req_t freq, mreq;
+	always_comb 
+		if(freq.valid)
+			dreq = freq;
+		else if(mreq.valid)
+			dreq = mreq;
+		else
+			dreq = dbus_req_t'(0);
 
 	fetch fetch(
 		.clk, .reset, 
 		.ireq, .iresp,
+		.dreq(freq), .dresp,
 		.branch, .jump,
 		.stop(stopd | stope | stopm),
 		.flushall,
 		.mret(decode.op == MRET),
 		.satp(csr.regs.satp),
-		.mode(csr.mode)
+		.mode(csr.mode),
 		.csrpc,
 		.stopf,
 		.dataF
@@ -62,7 +71,7 @@ module core
 	memory memory(
 		.clk, .reset,
 		.dataE, .dataM,
-		.dreq, .dresp,
+		.dreq(mreq), .dresp,
 		.stopm,
 		.flushde, .flushall,
 		.satp(csr.regs.satp),

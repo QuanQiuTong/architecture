@@ -13,6 +13,8 @@ module fetch
     input  [63:0]       jump, csrpc, satp,
     input  [1:0]        mode,
     input  ibus_resp_t  iresp,
+    input  dbus_resp_t  dresp,
+    output dbus_req_t   dreq,
     output ibus_req_t   ireq,
     output fetch_data_t dataF,
     output              stopf
@@ -26,29 +28,32 @@ module fetch
                          stopf      ? pc           :
                                       pc + 4;
 
-    assign ireq.addr = pc;
     always_ff @(posedge clk) begin
         pc <= reset ? 64'h80000000 : pc_next;
+        if(reset) dreq.valid = 0;
     end
 
-    always_ff @(posedge clk) begin
-        if(ireq.valid || !mret) 
-            ireq.valid = pc == pc_next;
-        else begin // !valid && mret
-            ireq.valid = flushall;
-        end
-    end
+    logic req, done, valid;
+    always_ff @(posedge clk)
+        if(req || !mret) 
+            req = pc == pc_next;
+        else // !req && mret
+            req = flushall;
+    wire [63:0] addr;
+
+    assign ireq.valid = req && done;
+    assign ireq.addr = addr;
 
     translate tr(
         .clk, .reset,
-        .en((load | store) & dataE.valid),
-        .va(dataE.result),
+        .en(req),
+        .va(pc),
         .satp,
         .mmode(mode),
         .pa(addr),
         .valid,
-        .mem_addr,
-        .mem_req,
+        .mem_addr(dreq.addr),
+        .mem_req(dreq.valid),
         .mem_data(dresp.data),
         .mem_data_valid(dresp.data_ok),
         .done

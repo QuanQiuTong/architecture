@@ -48,7 +48,6 @@ module translate (
         next_state = state;
         mem_req = 0;
         valid = 0;
-        pa = 64'b0;
         mem_addr = 64'b0;
         done = 0;
 
@@ -88,19 +87,21 @@ module translate (
                         // Leaf PTE
                         pa = {8'b0, pte[53:10], va[11:0]};
                         valid = 1;
+                        done = 1;
                         next_state = DONE;
+                        // next_state = en ? DONE : IDLE;
                     end else begin
                         // Non-leaf PTE
                         next_ppn = pte[53:10];
-                        level = level - 1;
                         next_state = (level == 0) ? DONE : READ_PTE;
+                        level = level - 1;
                     end
                 end
             end
 
             DONE: begin
                 done = 1;
-                next_state = IDLE;
+                next_state = en ? DONE : IDLE;
             end
             default: begin
                 // Do nothing
