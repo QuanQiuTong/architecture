@@ -53,7 +53,7 @@ module translate (
 
         case (state)
             IDLE: begin
-                if (mode == 0 || mmode == 'b11) begin
+                if (!en || mode == 0 || mmode == 'b11) begin
                     // Bare mode, no translation
                     pa = va;
                     valid = 1;
