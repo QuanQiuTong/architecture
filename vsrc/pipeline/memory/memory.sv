@@ -21,7 +21,7 @@ module memory
 );
     logic valid, mem_req, done;
     wire[63:0] addr, mem_addr;
-    pagetable pte(
+    translate tr(
         .clk, .reset,
         .en((load | store) & dataE.valid),
         .va(dataE.result),

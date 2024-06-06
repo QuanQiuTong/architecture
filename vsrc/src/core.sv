@@ -37,6 +37,8 @@ module core
 		.stop(stopd | stope | stopm),
 		.flushall,
 		.mret(decode.op == MRET),
+		.satp(csr.regs.satp),
+		.mode(csr.mode)
 		.csrpc,
 		.stopf,
 		.dataF

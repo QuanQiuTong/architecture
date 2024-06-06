@@ -33,12 +33,18 @@ module execute
         .choose(ctl.op == ALUW || ctl.op == ALUIW),
         .bubble, .valid(dataD.valid)
     );
-    assign branch = (ctl.op == JAL || ctl.op == JALR || ctl.op == BZ || ctl.op == BNZ) && dataD.valid;
+    assign branch = (ctl.op == JAL || ctl.op == JALR || ctl.op == BZ || ctl.op == BNZ || ctl.op == MRET) && dataD.valid;
     always_comb 
-    if(ctl.op == JAL) jump = dataD.pc + {{43{instr[31]}}, instr[31], instr[19:12] , instr[20] , instr[30:21], 1'b0};
-    else if(ctl.op == JALR) jump = dataD.rd1 + {{52{instr[31]}}, instr[31:20]};
-    else if(!(ctl.op ==BZ&&alu_result==1) && !(ctl.op ==BNZ&& alu_result==0)) jump = dataD.pc + 4;
-    else jump = dataD.pc + {{51{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+    if(ctl.op == JAL) 
+        jump = dataD.pc + {{43{instr[31]}}, instr[31], instr[19:12] , instr[20] , instr[30:21], 1'b0};
+    else if(ctl.op == JALR) 
+        jump = dataD.rd1 + {{52{instr[31]}}, instr[31:20]};
+    else if((ctl.op == BZ && alu_result == 1) || (ctl.op == BNZ && alu_result == 0)) 
+        jump = dataD.pc + {{51{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+    // else if(ctl.op == MRET) 
+    //     jump = dataD.csr.mepc;
+    else 
+        jump = dataD.pc + 4;
 
     assign stope = bubble & dataD.valid;
     always_ff @(posedge clk)
@@ -56,7 +62,6 @@ module execute
             dataE.csrdst <= dataD.csrdst;
             dataE.error  <= dataD.error;
         end
-        // 'else' causes verilator fails
 
 endmodule
 
