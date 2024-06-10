@@ -3044,7 +3044,7 @@ trapinit(void)
     asm volatile("csrw mtvec, %0" : : "r" (x));
     80001cbc:	00000797          	auipc	a5,0x0
     80001cc0:	eb878793          	addi	a5,a5,-328 # 80001b74 <trapvec>
-    80001cc4:	30579073          	csrw	mtvec,a5
+    80001cc4:	30579073          	csrw	mtvec,a5   # csrrw x0, mtvec, a5
     w_mtvec((uint64_t)trapvec);
 }
     80001cc8:	00813403          	ld	s0,8(sp)

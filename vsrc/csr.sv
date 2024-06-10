@@ -24,8 +24,8 @@ module csr
     csr_regs_t regs, regs_nxt;
     u2 mode, mode_nxt;
     word_t csrresult;
-    wire error = dataM.valid && (dataM.error != 0 || dataM.ctl.op == ECALL);
-    wire interupt = dataM.valid && regs.mstatus.mie && ((trint && regs.mie[7]) || (swint && regs.mie[3]) || (exint && regs.mie[11]));
+    wire error = (dataM.error != NOERROR) || (dataM.ctl.op == ECALL);
+    wire interupt = regs.mstatus.mie && ((trint && regs.mie[7]) || (swint && regs.mie[3]) || (exint && regs.mie[11]));
     
     always_ff @(posedge clk) begin
         if (reset) begin
@@ -89,7 +89,7 @@ module csr
                 regs_nxt.mstatus.mie = '0;
                 regs_nxt.mstatus.mpp = mode;
             end
-        end else if (~stopm && interupt) begin
+        end else if (~stopm && interupt && dataM.valid) begin
             flushde = 1;
             // if (~stopf)
             begin
