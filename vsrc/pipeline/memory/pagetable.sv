@@ -8,9 +8,9 @@
 
 module translate (
     input clk, reset, en, 
-    input logic [63:0] va,           // 虚拟地址
-    input logic [63:0] satp,         // satp寄存器值
-    input [1:0] mmode,                
+    input [63:0] va,           // 虚拟地址
+    input [63:0] satp,         // satp寄存器值
+    input [1:0]  mmode,                
     output logic [63:0] pa,          // 翻译后的物理地址
     output logic valid,              // 地址翻译是否有效
     output logic [63:0] mem_addr,    // 内存访问地址
@@ -19,85 +19,73 @@ module translate (
     input logic pte_valid,           // 内存数据有效信号
     output logic done                // 地址翻译完成信号
 );
-    logic [43:0] ppn;
-    logic [1:0] level;     // Current page table level
+    wire bare = !en || satp[63:60] == 0 || mmode == 'b11;
+    wire got = pte_valid && state == READ_PTE && pte[0] == 1 && pte[3:1] != 'b000;
 
     enum reg [1:0] {
         IDLE,
         READ_PTE,
         DONE
     } state, next_state;
+    reg [43:0] ppn, next_ppn;
+    reg [1:0] level, next_level;
 
-    // State machine
-    always_ff @(posedge clk)
-        if (reset) begin
-            state <= IDLE;
-        end else begin
-            state <= next_state;
-        end
+    always_ff @(posedge clk) begin
+        state <= reset ? IDLE : next_state;
+        level <= next_level;
+        ppn <= next_ppn;
+    end
 
     always_comb begin
         next_state = state;
-        valid = 0;
-        mem_req = 0;
-        mem_addr = 64'b0;
-        done = 0;
-
+        next_level = level;
+        next_ppn = ppn;
         case (state)
-            IDLE: begin
-                if (!en || satp[63:60] == 0 || mmode == 'b11) begin
-                    pa = va;
-                    valid = 1;
+            IDLE:
+                if (bare) begin
                     next_state = IDLE;
-                    done = 1;
                 end else if (satp[63:60] == 8) begin
-                    ppn = satp[43:0];
-                    level = 2;
-                    next_state = en ? READ_PTE : IDLE;
-                    done = !en;
+                    next_ppn = satp[43:0];
+                    next_level = 2;
+                    next_state = READ_PTE;
                 end
-            end
 
-            READ_PTE: begin
-                case (level)
-                    3: mem_addr = {8'b0, ppn, va[47:39], 3'b000};
-                    2: mem_addr = {8'b0, ppn, va[38:30], 3'b000};
-                    1: mem_addr = {8'b0, ppn, va[29:21], 3'b000};
-                    0: mem_addr = {8'b0, ppn, va[20:12], 3'b000};
-                endcase
-                mem_req = 1;
+            READ_PTE:
                 if (pte_valid) begin
-                    if (pte[0] == 0) begin
-                        // Invalid PTE
-                        valid = 0;
+                    if (pte[0] == 0) begin // Invalid PTE
                         next_state = DONE;
-                    end else if (pte[3:1] != 'b000) begin
-                        // Leaf PTE
-                        pa = {8'b0, pte[53:10], va[11:0]};
-                        valid = 1;
-                        done = 1;
+                    end else if (pte[3:1] != 'b000) begin // Leaf PTE
                         next_state = DONE;
-                        // next_state = en ? DONE : IDLE;
                     end else begin
-                        // Non-leaf PTE
-                        ppn = pte[53:10];
+                        next_ppn = pte[53:10];
                         next_state = (level == 0) ? DONE : READ_PTE;
-                        level = level - 1;
+                        next_level = level - 1;
                     end
                 end
-            end
 
-            DONE: begin
-                done = 1;
+            DONE:
                 next_state = en ? DONE : IDLE;
-                pa = pa;
-            end
-            default: begin
-                // Do nothing
-            end
+            default: begin end
         endcase
     end
 
+    assign mem_req = state == READ_PTE;
+    always_comb case (level)
+        3: mem_addr = {8'b0, ppn, va[47:39], 3'b000};
+        2: mem_addr = {8'b0, ppn, va[38:30], 3'b000};
+        1: mem_addr = {8'b0, ppn, va[29:21], 3'b000};
+        0: mem_addr = {8'b0, ppn, va[20:12], 3'b000};
+    endcase
+    assign done = bare || state == DONE || got;
+
+    reg [63:0] _pa;
+    always_latch
+        if (got)
+            _pa = {8'b0, pte[53:10], va[11:0]};
+
+    assign pa = bare ? va : _pa;
+    
+    assign valid = 1; // ignore page fault
 endmodule
 
 
