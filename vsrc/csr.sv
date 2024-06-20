@@ -29,13 +29,13 @@ module csr
     
     always_ff @(posedge clk) begin
         if (reset) begin
-            regs           <= '0;
-            regs.mcause[1] <= 1'b1;
-            regs.mepc[31]  <= 1'b1;
-            mode           <= 2'd3;
+            regs           = '0;
+            regs.mcause[1] = 1'b1;
+            regs.mepc[31]  = 1'b1;
+            mode           = 2'd3;
         end else begin
-            regs           <= regs_nxt;
-            mode           <= mode_nxt;
+            regs           = regs_nxt;
+            mode           = mode_nxt;
         end
     end
 
