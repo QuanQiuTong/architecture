@@ -15,70 +15,58 @@ module translate (
     output logic valid,              // 地址翻译是否有效
     output logic [63:0] mem_addr,    // 内存访问地址
     output logic mem_req,            // 内存请求信号
-    input logic [63:0] mem_data,     // 内存返回数据
-    input logic mem_data_valid,      // 内存数据有效信号
+    input logic [63:0] pte,          // 内存返回数据
+    input logic pte_valid,           // 内存数据有效信号
     output logic done                // 地址翻译完成信号
 );
-    wire [3:0] mode = satp[63:60];
-    wire [15:0] asid = satp[59:44];
-    wire [43:0] ppn = satp[43:0];
+    logic [43:0] ppn;
+    logic [1:0] level;     // Current page table level
 
-    // Intermediate signals
-    logic [63:0] pte;      // Page table entry
-    logic [43:0] next_ppn; // Next level PPN
-    logic [2:0] level;     // Current page table level
-
-    enum logic [1:0] {
+    enum reg [1:0] {
         IDLE,
         READ_PTE,
-        TRANSLATE,
         DONE
     } state, next_state;
 
     // State machine
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk)
         if (reset) begin
             state <= IDLE;
         end else begin
             state <= next_state;
         end
-    end
 
     always_comb begin
         next_state = state;
-        mem_req = 0;
         valid = 0;
+        mem_req = 0;
         mem_addr = 64'b0;
         done = 0;
 
         case (state)
             IDLE: begin
-                if (!en || mode == 0 || mmode == 'b11) begin
-                    // Bare mode, no translation
+                if (!en || satp[63:60] == 0 || mmode == 'b11) begin
                     pa = va;
                     valid = 1;
                     next_state = IDLE;
                     done = 1;
-                end else if (mode == 8 || mode == 9) begin
-                    // Sv39 or Sv48
-                    next_ppn = ppn;
-                    level = (mode == 8) ? 2 : 3;
+                end else if (satp[63:60] == 8) begin
+                    ppn = satp[43:0];
+                    level = 2;
                     next_state = en ? READ_PTE : IDLE;
-                    done = en ? 0 : 1;
+                    done = !en;
                 end
             end
 
             READ_PTE: begin
                 case (level)
-                    3: mem_addr = {8'b0, next_ppn, va[47:39], 3'b000};
-                    2: mem_addr = {8'b0, next_ppn, va[38:30], 3'b000};
-                    1: mem_addr = {8'b0, next_ppn, va[29:21], 3'b000};
-                    0: mem_addr = {8'b0, next_ppn, va[20:12], 3'b000};
-                    default: mem_addr = 64'b0;
+                    3: mem_addr = {8'b0, ppn, va[47:39], 3'b000};
+                    2: mem_addr = {8'b0, ppn, va[38:30], 3'b000};
+                    1: mem_addr = {8'b0, ppn, va[29:21], 3'b000};
+                    0: mem_addr = {8'b0, ppn, va[20:12], 3'b000};
                 endcase
                 mem_req = 1;
-                if (mem_data_valid) begin
-                    pte = mem_data;
+                if (pte_valid) begin
                     if (pte[0] == 0) begin
                         // Invalid PTE
                         valid = 0;
@@ -92,7 +80,7 @@ module translate (
                         // next_state = en ? DONE : IDLE;
                     end else begin
                         // Non-leaf PTE
-                        next_ppn = pte[53:10];
+                        ppn = pte[53:10];
                         next_state = (level == 0) ? DONE : READ_PTE;
                         level = level - 1;
                     end
@@ -102,6 +90,7 @@ module translate (
             DONE: begin
                 done = 1;
                 next_state = en ? DONE : IDLE;
+                pa = pa;
             end
             default: begin
                 // Do nothing

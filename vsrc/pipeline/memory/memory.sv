@@ -21,6 +21,8 @@ module memory
 );
     logic valid, mem_req, done;
     wire[63:0] addr, mem_addr;
+    wire[2:0] funct3 = dataE.instr[14:12];
+    wire load = dataE.ctl.op == LD, store = dataE.ctl.op == SD;
     translate tr(
         .clk, .reset,
         .en((load | store) & dataE.valid),
@@ -31,14 +33,10 @@ module memory
         .valid,
         .mem_addr,
         .mem_req,
-        .mem_data(dresp.data),
-        .mem_data_valid(dresp.data_ok),
+        .pte(dresp.data),
+        .pte_valid(dresp.data_ok),
         .done
     );
-
-    wire[2:0] funct3 = dataE.instr[14:12];
-    wire load = dataE.ctl.op == LD, store = dataE.ctl.op == SD;
-
     
     msize_t size;
     strobe_t strobe;

@@ -29,10 +29,8 @@ module fetch
                          stopf      ? pc           :
                                       pc + 4;
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk)
         pc <= reset ? 64'h80000000 : pc_next;
-        if(reset) dreq.valid = 0;
-    end
 
     logic req, done, valid;
     always_ff @(posedge clk)
@@ -55,10 +53,13 @@ module fetch
         .valid,
         .mem_addr(dreq.addr),
         .mem_req(dreq.valid),
-        .mem_data(dresp.data),
-        .mem_data_valid(dresp.data_ok),
+        .pte(dresp.data),
+        .pte_valid(dresp.data_ok),
         .done
     );
+    assign dreq.size = MSIZE8;
+    assign dreq.strobe = 0;
+    assign dreq.data = 0;
 
     always_ff @(posedge clk)
         if (reset) begin

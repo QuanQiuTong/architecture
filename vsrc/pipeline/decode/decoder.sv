@@ -203,7 +203,8 @@ module decoder
                         end                        
                     end
                     default: begin
-                        
+                        op = UNKNOWN;
+                        alufunc = NOTALU;
                     end
                 endcase
         end        
