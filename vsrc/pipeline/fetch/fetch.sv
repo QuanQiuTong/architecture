@@ -66,6 +66,7 @@ module fetch
             dataF.valid <= 0;
             dataF.instr <= 0;
             dataF.pc <= 0;
+            dataF.error <= NOERROR;
         end else if (flushall || ~iresp.data_ok) begin
             dataF.valid <= 0;
         end else if (!stop) begin

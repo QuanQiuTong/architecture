@@ -22,7 +22,8 @@ module execute
     control_t ctl;
     assign ctl = dataD.ctl;
     word_t rd2, rd1;
-    u32 instr = dataD.instr;
+    u32 instr;
+    assign instr = dataD.instr;
     word_t alu_result;
     alu alu (
         .clk,

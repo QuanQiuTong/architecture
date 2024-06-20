@@ -67,7 +67,7 @@ package csr_pkg;
 		u64
 		mscratch, // Scratch register for machine trap handlers
 		mepc,	 // Machine exception program counter
-		satp,	 // Supervisor address translation and protection, read-only as 0 in this work
+		satp,	 // Supervisor address translation and protection
 		mcause,  // Machine trap cause
 		mcycle,  // Counter
 		mtval;
