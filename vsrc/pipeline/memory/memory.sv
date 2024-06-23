@@ -4,7 +4,7 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/pipes.sv"
-`include "pipeline/memory/pagetable.sv"
+`include "pipeline/memory/translate.sv"
 `endif
 
 module memory

@@ -4,6 +4,7 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/pipes.sv"
+`include "pipeline/memory/translate.sv"
 `endif
 
 module fetch
@@ -20,7 +21,7 @@ module fetch
     output fetch_data_t dataF,
     output              stopf
 );
-    reg [63:0] pc;
+    reg [63:0] pc = 64'h80000000;
     
     assign stopf = (~iresp.data_ok) | stop;
     wire[63:0] pc_next = reset      ? 64'h80000000 :
@@ -76,16 +77,6 @@ module fetch
             dataF.error <= pc[1:0] == 'b00 ? NOERROR : INSTR_MISALIGN;
         end
 
-    // dubug-use registers to show if pc has reached the target
-    reg sched = 0, swtch = 0, sfence = 0, panic = 0, usertrapret = 0, trapret = 0;
-    always_ff @(posedge clk) begin
-        if(pc == 'h8000193c) sched <= 1;
-        if(pc == 'h80001b00) swtch <= 1;
-        if(pc == 'h80001c10) sfence <= 1;
-        if(pc == 'h80000324) panic <= ~panic;
-        if(pc == 'h80001d78) usertrapret <= 1;
-        if(pc == 'h80001c18) trapret <= 1;
-    end
 endmodule
 
 `endif

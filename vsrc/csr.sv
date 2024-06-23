@@ -21,8 +21,22 @@ module csr
     input logic stopm, stopf,
     output logic flushde, flushall
 );
-    csr_regs_t regs, regs_nxt;
-    u2 mode, mode_nxt;
+    csr_regs_t regs = '{
+        mhartid: 0,
+        mie: 0,
+        mip: 0,
+        mtvec: 0,
+        mstatus: '0,
+        mscratch: 0,
+        mepc: 64'h80000000,
+        mcause: 64'b10,
+        mcycle: 0,
+        mtval: 0,
+        satp: 0
+    };
+    csr_regs_t regs_nxt;
+    reg[1:0] mode = 3;
+    logic[1:0] mode_nxt;
     word_t csrresult;
     wire error = (dataM.error != NOERROR) || (dataM.ctl.op == ECALL);
     wire interupt = regs.mstatus.mie && ((trint && regs.mie[7]) || (swint && regs.mie[3]) || (exint && regs.mie[11]));

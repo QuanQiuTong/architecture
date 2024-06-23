@@ -22,30 +22,30 @@ package csr_pkg;
 
 
 	typedef struct packed {
-		u1 sd;
-		logic [MXLEN-2-36:0] wpri1;
-		u2 sxl;
-		u2 uxl;
-		u9 wpri2;
-		u1 tsr;
-		u1 tw;
-		u1 tvm;
-		u1 mxr;
-		u1 sum;
-		u1 mprv;
-		u2 xs;
-		u2 fs;
-		u2 mpp;
-		u2 wpri3;
-		u1 spp;
-		u1 mpie;
-		u1 wpri4;
-		u1 spie;
-		u1 upie;
-		u1 mie;
-		u1 wpri5;
-		u1 sie;
-		u1 uie;
+		reg sd;
+		reg [MXLEN-2-36:0] wpri1;
+		reg[1:0] sxl;
+		reg[1:0] uxl;
+		reg[8:0] wpri2;
+		reg tsr;
+		reg tw;
+		reg tvm;
+		reg mxr;
+		reg sum;
+		reg mprv;
+		reg[1:0] xs;
+		reg[1:0] fs;
+		reg[1:0] mpp;
+		reg[1:0] wpri3;
+		reg spp;
+		reg mpie;
+		reg wpri4;
+		reg spie;
+		reg upie;
+		reg mie;
+		reg wpri5;
+		reg sie;
+		reg uie;
 	} mstatus_t;
 
 	typedef struct packed {
@@ -57,14 +57,14 @@ package csr_pkg;
 	
 
 	typedef struct packed {
-		u64
+		reg[63:0]
 		mhartid, // Hardware thread Id, read-only as 0 in this work
 		mie,	 // Machine interrupt-enable register
 		mip,	 // Machine interrupt pending
 		mtvec;	 // Machine trap-handler base address
 		mstatus_t
 		mstatus; // Machine status register
-		u64
+		reg[63:0]
 		mscratch, // Scratch register for machine trap handlers
 		mepc,	 // Machine exception program counter
 		satp,	 // Supervisor address translation and protection

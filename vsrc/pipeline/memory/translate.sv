@@ -11,13 +11,13 @@ module translate (
     input [63:0] va,           // 虚拟地址
     input [63:0] satp,         // satp寄存器值
     input [1:0]  mmode,                
-    output logic [63:0] pa,          // 翻译后的物理地址
-    output logic valid,              // 地址翻译是否有效
+    output [63:0] pa,          // 翻译后的物理地址
+    output valid,              // 地址翻译是否有效
     output logic [63:0] mem_addr,    // 内存访问地址
-    output logic mem_req,            // 内存请求信号
+    output mem_req,            // 内存请求信号
     input  [63:0] pte,          // 内存返回数据
     input  pte_valid,           // 内存数据有效信号
-    output logic done                // 地址翻译完成信号
+    output done                // 地址翻译完成信号
 );
     wire bare = satp[63:60] == 0 || mmode == 'b11;
 
